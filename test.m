@@ -21,11 +21,16 @@ gradf= @(x) A' * (A*x-b)/ sqrt( norm(A*x-b)^2 + eps1) + lambda * x ./ sqrt( abs(
 
 xr = ITEM(gradf,mu,L,x0,10000)
 
-bn = b; % + sigma*normrnd(0,1,m,1);
-lambda = 10^1;
-OPTIONS = set_parameters;
-OPTIONS.tol_I = 1.0e-6;
-[xr2,beta,runhist_I,runhist_II]= square_root_PMM(A,bn,m,n,lambda,OPTIONS,'l1');
+Lmax = norm(A,2);
+lambda = 10^-0.5;
+xr2 = proximal_gradient(A,b,eps1,lambda,L,x0,100000)
 
-norm(xr - x)/norm(x)
-norm(xr2 - x)/norm(x)
+
+% bn = b; % + sigma*normrnd(0,1,m,1);
+% lambda = 10^1;
+% OPTIONS = set_parameters;
+% OPTIONS.tol_I = 1.0e-6;
+% [xr2,beta,runhist_I,runhist_II]= square_root_PMM(A,bn,m,n,lambda,OPTIONS,'l1');
+% 
+% norm(xr - x)/norm(x)
+% norm(xr2 - x)/norm(x)
