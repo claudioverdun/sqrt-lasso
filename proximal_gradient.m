@@ -4,11 +4,11 @@
 % its Nonsmooth Loss Function
 
 function x = proximal_gradient(A,b,eps1,lambda,Lmax,x0,N)
-n = length(b);
-obj = @(x) sqrt(norm(A * x - b)^2 + eps1);%/sqrt(n);
-grad = @(x) A' * (A*x-b)/ sqrt( norm(A*x-b)^2 + eps1);%/ sqrt(n);
-Q = @(x,y,lambda,L) obj(x) + grad(x)' * (y-x) + 0.5*L*norm(y-x)^2 + lambda* norm(y,1);
-F = @(x,lambda) obj(x) + lambda* norm(x,1);
+m = length(b);
+obj = @(x) sqrt(norm(A * x - b)^2 + eps1)/sqrt(m);
+grad = @(x) A' * (A*x-b)/ sqrt( norm(A*x-b)^2 + eps1)/ sqrt(m);
+Q = @(x,y,lambda,L) obj(x) + grad(x)' * (y-x) + 0.5*L*norm(y-x)^2 + lambda* norm(y,1)/m;
+F = @(x,lambda) obj(x) + lambda* norm(x,1)/m;
 L = Lmax;
 Ltilde = L;
 x = x0;
