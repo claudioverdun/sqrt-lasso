@@ -36,5 +36,5 @@ end
 
 function thresh = step(x,gr,L,lambda)
 xnew = x - gr / L;
-thresh = sign(x) .* max(abs(xnew) - lambda/L,0 );
+thresh = sign(xnew) .* max(abs(xnew) - lambda/L,0 );
 end
