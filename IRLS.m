@@ -1,0 +1,24 @@
+function x = IRLS(A,b,lambda,eps1,eps2,x0,N,Nlsp)
+n = size(A,2);
+x = x0;
+threshold = 10^-10;
+
+for it=1:N
+    x_old = x;
+    z0 = sqrt(norm(A*x-b)^2 + eps1^2);
+    z = sqrt(lambda* abs(x).^2 + eps2^2);
+    A_expanded = [A/sqrt(z0);diag(sqrt(lambda./z))];
+    b_expanded = [b/sqrt(z0);zeros(n,1)];
+    [x, flag] = lsqr(A_expanded,b_expanded, threshold, Nlsp,[],[],x);
+    
+    if flag ==  1
+        fprintf('lsqr did not converged');
+        return;
+    end
+%     x = A_expanded \ b_expanded;
+    
+    if norm(x_old-x) < threshold
+        break;
+    end
+end
+end

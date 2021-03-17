@@ -1,4 +1,5 @@
 function z = ITEM(gradf,mu,L,x0,N)
+threshold = 10^-10;
 
 if (mu ~= 0)
     q = mu/L;
@@ -8,6 +9,7 @@ if (mu ~= 0)
     xk = x0;
 
     for i = 1:N
+        z_old = zk;
         Ak1 = ( (1+q)*Ak+2*(1+sqrt((1+Ak)*(1+q*Ak)) ))/(1-q)^2; 
         betak  	= Ak/(1-q)/Ak1;
         deltak 	= 0.5 * ( (1-q)^2*Ak1 -(1+q)*Ak)/(1+q+q*Ak);
@@ -15,6 +17,10 @@ if (mu ~= 0)
         grk = gradf(yk);
         xk = yk - grk/L;
         zk = (1 - q*deltak)*zk + q* deltak*yk - deltak*grk/L;
+        
+        if (norm(z_old - zk) < threshold)
+            break;
+        end
     end
     z = zk;
 else
@@ -24,6 +30,7 @@ else
     xk = x0;
 
     for i = 1:N
+        x_old = xk;
         grk = gradf(xk);
         yk1  =  xk - grk/L;
         if (i == N)
@@ -34,6 +41,10 @@ else
         xk = yk1 + (thetak - 1)*(yk1 - yk)/thetak1 - thetak * grk /thetak1 / L;
         yk = yk1;
         thetak = thetak1;
+        
+        if (norm(x_old - xk) < threshold)
+            break;
+        end
     end
     z = xk;
 end

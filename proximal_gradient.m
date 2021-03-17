@@ -4,6 +4,7 @@
 % its Nonsmooth Loss Function
 
 function x = proximal_gradient(A,b,eps1,lambda,Lmax,x0,N)
+threshold = 10^-10;
 m = length(b);
 obj = @(x) sqrt(norm(A * x - b)^2 + eps1)/sqrt(m);
 grad = @(x) A' * (A*x-b)/ sqrt( norm(A*x-b)^2 + eps1)/ sqrt(m);
@@ -15,6 +16,7 @@ x = x0;
 
 for it = 1:N 
     %it, L
+    x_old = x;
     gr = grad(x);
     while true
         thresh = step(x,gr,Ltilde,lambda);
@@ -30,7 +32,9 @@ for it = 1:N
     Ltilde = L;
     
     x = step(x,gr,L,lambda);
-    
+    if (norm(x_old - x) < threshold)
+        break;
+    end
 end
 end
 

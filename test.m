@@ -11,10 +11,10 @@ A = randn(m,n);
 x = [ones(5,1) ; zeros(95,1)];
 b = A * x;
 
-% lambda = 10^-0.5;
+lambda = 10^-0.5;
 lambda_opt = sqrt(m)*norminv(1 - 0.05/s);
 lambda_opt = s * sqrt( log(n)/m);
-lambda = lambda_opt;
+% lambda = lambda_opt;
 
 eps1 = 10^-5;
 eps2 = 10^-5;
@@ -24,17 +24,30 @@ mu = 0;
 L = lambda/ sqrt(eps2) + 1.0/sqrt(eps1);
 
 gradf= @(x) A' * (A*x-b)/ sqrt( norm(A*x-b)^2 + eps1)/sqrt(m) + lambda * x ./ sqrt( abs(x).^2 + eps2) / m;
-
-xr = ITEM(gradf,mu,L,x0,100000)
-
 Lmax = norm(A,2);
-% lambda = 10^-0.5;
 
+% % single run methods
+xr = ITEM(gradf,mu,L,x0,10000);
+xr2 = proximal_gradient(A,b,eps1,lambda,L,x0,10000);
+xr3 = proximal_newton(A,b,eps1,lambda,x0,1000,10000);
+xr4 = IRLS(A,b,lambda,eps1,eps2,x0,100,10000);
 
-
-xr2 = proximal_gradient(A,b,eps1,lambda,L,x0,100000);
 [xr.';
- xr2']
+ xr2';
+ xr3';
+ xr4']
+
+lambda_max = 1000000;
+% pathwise methods
+xr5 = smooth_concomitant_lasso(A, b, 10^-10, 1000, 10, 10, eps1, lambda_max);
+xr6 = pathwise_proximal_gradient(A,b,eps1,lambda_max,L,10000,10);
+xr7 = pathwise_proximal_newton(A,b,eps1,lambda_max,100,10000,10);
+xr8 = pathwise_IRLS(A,b,eps1,eps2,lambda_max,100,10000,10);
+
+[xr5';
+ xr6';
+ xr7';
+ xr8']
 
 % bn = b; % + sigma*normrnd(0,1,m,1);
 % lambda = 10^1;
