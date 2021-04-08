@@ -4,8 +4,8 @@ threshold = 10^-10;
 obj = @(x) sqrt(norm(A * x - b)^2 + eps1)/sqrt(m);
 grad = @(x) A' * (A*x-b)/ sqrt( norm(A*x-b)^2 + eps1)/ sqrt(m);
 H = @(x) Hessian(x, A,b,eps1);
-Q = @(x,y,lambda) obj(y) + grad(y)' * (x-y) + 0.5*(x-y)'*H(y)*(x-y) + lambda* norm(x,1)/m;
-F = @(x,lambda) obj(x) + lambda* norm(x,1)/m;
+Q = @(x,y,lambda) obj(y) + grad(y)' * (x-y) + 0.5*(x-y)'*H(y)*(x-y) + lambda* norm(x,1);
+F = @(x,lambda) obj(x) + lambda* norm(x,1);
 
 x= x0;
 

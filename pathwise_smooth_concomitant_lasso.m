@@ -1,4 +1,4 @@
-function x = smooth_concomitant_lasso(A, b, threshold, N, T, F, sigma0, lambda_max)
+function x = pathwise_smooth_concomitant_lasso(A, b, threshold, N, T, F, sigma0, lambda_max)
 m = length(b);
 n = size(A,2);
 lambda = min(norm(A' * b, 'Inf')/(norm(b) * sqrt(m)), lambda_max);
