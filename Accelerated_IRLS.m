@@ -6,8 +6,8 @@ threshold = 10^-10;
 Ak = 0;
 v = x;
 beta = 0;
-obj = @(x,z0,z) (norm(A*x-b)^2/m + eps1)/z0 + z0 + sum((abs(lambda*x).^2 + eps2)./z + z);
-grad = @(x,z0,z) [2*A'*(A*x - b)/m/z0 + 2 * lambda^2*sum(x ./ z);
+obj = @(x,z0,z) 0.5*(norm(A*x-b)^2/m + eps1)/z0 + 0.5*z0 + 0.5*sum((abs(lambda*x).^2 + eps2)./z + z);
+grad = @(x,z0,z) 0.5*[2*A'*(A*x - b)/m/z0 + 2 * lambda^2*sum(x ./ z);
     1 - (norm(A*x - b)^2/m + eps1)/z0^2;
     1 - lambda^2 *(x.^2 + eps2) ./ z.^2];
 
@@ -28,8 +28,8 @@ for it=1:N
     yk = x + beta*(v-x);
     z0k = z0 -beta*(vz0-z0);
     zk = z -beta*(vz-z);
-    A_expanded = [A/sqrt(z0k*m);diag(lambda*sqrt(1./zk))];
-    b_expanded = [b/sqrt(z0k*m);zeros(n,1)];
+    A_expanded = [A/sqrt(2*z0k*m);diag(lambda*sqrt(1./(2*zk)))];
+    b_expanded = [b/sqrt(2*z0k*m);zeros(n,1)];
     [x, flag] = lsqr(A_expanded,b_expanded, [], Nlsp,[],[],yk);
     
     if flag ==  1
