@@ -3,7 +3,7 @@
 % gradf = @(x) x - x0;
 % x = ITEM(gradf,0,1,[1;0;0;0],1000)
 
-factors = 1:2^4;
+factors = 1:2^2;
 trials = 5;
 
 m_init = 30;
@@ -70,13 +70,13 @@ for fi = 1:length(factors)
 %         times(6,fi,t) = toc + times(1,fi,t);
 %         errors(6,fi,t) = norm(xr6 - x)/norm(x);
         tic
-        xr7 = Accelerated_IRLS(A,b,lambda,eps1,eps2,x0,100,10000);
+        xr7 = Accelerated_IRLS_v2(A,b,lambda,eps1,eps2,x0,100,10000);
         times(7,fi,t) = toc;
         errors(7,fi,t) = norm(xr7 - x)/norm(x);
-%        tic
-%         xr8 = Accelerated_IRLS_v2(A,b,lambda,eps1,eps2,x0,100,10000);
-%         times(8,fi,t) = toc;
-%         errors(8,fi,t) = norm(xr8 - x)/norm(x);
+        tic
+        xr8 = Accelerated_IRLS_v3(A,b,lambda,eps1,eps2,x0,100,10000);
+        times(8,fi,t) = toc;
+        errors(8,fi,t) = norm(xr8 - x)/norm(x);
 %         lambda_max = 1000000;
 %         % pathwise methods
 %         tic
@@ -106,9 +106,9 @@ avg_error = mean(errors,3);
 avg_time = mean(times,3);
 
 figure
-semilogy(factors, avg_error(1:7,:))
+semilogy(factors, avg_error(1:8,:))
 title('Relative errors')
-legend({'ITEM','proximal gradient','proximal newton','IRLS(100)','concomitant lasso','IRLS(1000)','Accelerated IRLS'});%,'Half Accelerated IRLS'})
+legend({'ITEM','proximal gradient','proximal newton','IRLS(100)','concomitant lasso','IRLS(1000)','Half Accelerated IRLS','Half Accelerated IRLS v2'});%,'Half Accelerated IRLS'})
 
 % figure
 % semilogy(factors, avg_error(5:8,:))
@@ -116,9 +116,9 @@ legend({'ITEM','proximal gradient','proximal newton','IRLS(100)','concomitant la
 % legend({'concomitant lasso','pathwise proximal gradient','pathwise proximal newton','pathwise IRLS'})
 
 figure
-plot(factors,avg_time(1:7,:))
+plot(factors,avg_time(1:8,:))
 title('Runtime')
-legend({'ITEM','proximal gradient','proximal newton','IRLS(100)','concomitant lasso','IRLS(1000)','Accelerated IRLS'});%,'Half Accelerated IRLS'})
+legend({'ITEM','proximal gradient','proximal newton','IRLS(100)','concomitant lasso','IRLS(1000)','Half Accelerated IRLS','Half Accelerated IRLS v2'});%,'Half Accelerated IRLS'})
 
 % figure
 % plot(factors, avg_time(5:8,:))

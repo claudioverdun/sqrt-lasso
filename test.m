@@ -35,6 +35,7 @@ xr5 = smooth_concomitant_lasso_v2(A, b, 10^-6, 1000, 10, eps1, lambda, x0);
 xr6 = Accelerated_IRLS(A,b,lambda,eps1,eps2,x0,1000,10000);
 xr7 = Restarted_IRLS(A,b,lambda,eps1,eps2,x0,25,10000,40);
 xr8 = Accelerated_IRLS_v2(A,b,lambda,eps1,eps2,x0,1000,10000);
+xr9 = Accelerated_IRLS_v2(A,b,lambda,eps1,eps2,x0,1000,10000);
 
 [xr.';
  xr2';
@@ -43,7 +44,8 @@ xr8 = Accelerated_IRLS_v2(A,b,lambda,eps1,eps2,x0,1000,10000);
  xr5';
  xr6';
  xr7';
- xr8']
+ xr8';
+ xr9']
 
 lambda_max = 1000000;
 % pathwise methods

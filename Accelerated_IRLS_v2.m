@@ -40,7 +40,7 @@ for it=1:N
     
     akp = (diff + sqrt(diff*(diff + 4*Ak*gradnsq )))/(2*gradnsq);
     Ak = Ak+akp;
-    v = v + akp*gr(1:n);
+    v = v - akp*gr(1:n);
 end
 end
 
