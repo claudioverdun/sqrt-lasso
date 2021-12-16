@@ -11,10 +11,13 @@ A = randn(m,n);
 x = [ones(5,1) ; zeros(95,1)];
 b = A * x;
 
+q = 0.1;
 lambda = 10^-0.5;
 lambda_opt = sqrt(m)*norminv(1 - 0.05/s);
 lambda_opt = sqrt( log(n)/m); %s*sqrt( log(n)/m);
 lambda = lambda_opt/1.5;
+lambda_q = lambda^q;
+%lambda_q = (1 + 0.5^q)/(2 * 100^q);
 
 eps1 = 10^-5;
 eps2 = 10^-5;
@@ -27,25 +30,27 @@ L = lambda/ sqrt(eps2) + 1.0/sqrt(eps1);
 Lmax = norm(A,2);
 
 % % single run methods
-xr = ITEM_sqrtlasso(A,b,lambda,mu,L,eps1,eps2,x0,10000);
-xr2 = proximal_gradient(A,b,eps1,lambda,L,x0,10000);
-xr3 = proximal_newton(A,b,eps1,lambda,x0,1000,10000);
+% xr = ITEM_sqrtlasso(A,b,lambda,mu,L,eps1,eps2,x0,10000);
+% xr2 = proximal_gradient(A,b,eps1,lambda,L,x0,10000);
+% xr3 = proximal_newton(A,b,eps1,lambda,x0,1000,10000);
 xr4 = IRLS(A,b,lambda,eps1,eps2,x0,1000,10000);
-xr5 = smooth_concomitant_lasso_v2(A, b, 10^-6, 1000, 10, eps1, lambda, x0);
-xr6 = Accelerated_IRLS(A,b,lambda,eps1,eps2,x0,1000,10000);
-xr7 = Restarted_IRLS(A,b,lambda,eps1,eps2,x0,25,10000,40);
-xr8 = Accelerated_IRLS_v2(A,b,lambda,eps1,eps2,x0,1000,10000);
-xr9 = Accelerated_IRLS_v2(A,b,lambda,eps1,eps2,x0,1000,10000);
-
-[xr.';
- xr2';
- xr3';
- xr4';
- xr5';
- xr6';
- xr7';
- xr8';
- xr9']
+xr5 = lq_IRLS(A,b,lambda_q,q,eps1,eps2,xr4,1000,10000);
+% xr5 = smooth_concomitant_lasso_v2(A, b, 10^-6, 1000, 10, eps1, lambda, x0);
+% xr6 = Accelerated_IRLS(A,b,lambda,eps1,eps2,x0,1000,10000);
+% xr7 = Restarted_IRLS(A,b,lambda,eps1,eps2,x0,25,10000,40);
+% xr8 = Accelerated_IRLS_v2(A,b,lambda,eps1,eps2,x0,1000,10000);
+% xr9 = Accelerated_IRLS_v2(A,b,lambda,eps1,eps2,x0,1000,10000);
+[xr4';
+    xr5';]
+% [xr.';
+%  xr2';
+%  xr3';
+%  xr4';
+%  xr5';
+%  xr6';
+%  xr7';
+%  xr8';
+%  xr9']
 
 lambda_max = 1000000;
 % pathwise methods
