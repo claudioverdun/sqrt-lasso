@@ -53,14 +53,14 @@ cf.model  = {'gaussian'};
 
 cf.alg                = {}
 
-% $$$ cf.alg{end+1}.name    = 'cvx_slasso';
-% $$$ cf.alg{end  }.legend  = 'cvx_slasso, lambda=opt';
-% $$$ cf.alg{end  }.lambda  = sqrt(log(cf.n/cf.m));
+cf.alg{end+1}.name    = 'cvx_slasso';
+cf.alg{end  }.legend  = 'cvx_slasso, lambda=opt';
+cf.alg{end  }.lambda  = sqrt(log(cf.n/cf.m)/m);
 
 
 cf.alg{end+1}.name    = 'irls_slasso';
 cf.alg{end  }.legend  = 'irls_slasso, lambda=opt';
-cf.alg{end  }.lambda  = sqrt(log(cf.n/cf.m));
+cf.alg{end  }.lambda  = sqrt(log(cf.n/cf.m)/m);
 cf.alg{end  }.lambda  = sqrt(log(n)/m); % from Claudio
 
 cf.runs   = 1000;
@@ -159,9 +159,10 @@ for irun=1:cf.runs
                     cvx_begin quiet
                     %cvx_precision low
                     variable x(cf.n)
-                    minimize(norm(A*x - b,2)*cf.m + 2*lambda*norm(x,1))
+                    minimize(norm(A*x - b,2)/sqrt(cf.m) + 2*lambda/cf.m*norm(x,1))
                     cvx_end
                     ws.xhat = x;
+
                   case 'irls_slasso',
                     
                     A=squeeze(ws.meas(imodel,:,:));
