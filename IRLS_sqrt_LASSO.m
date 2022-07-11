@@ -25,7 +25,7 @@ for it=1:N
             sX_c=sort(abs(x),'descend');
             sX_c_complement=sX_c((s+1):end);
             eps_rule2 = norm(sX_c_complement,1)/n;
-            fprintf('Epsilon 2 is %.16f \n', eps_rule2)  
+            %fprintf('Epsilon 2 is %.16f \n', eps_rule2)  
         case 'DDFG'
             sX_c=sort(abs(x),'descend');
             sX_c_complement=sX_c((s+1):end);
@@ -46,17 +46,17 @@ for it=1:N
     switch eps_mode1
         case 'KMS'
             eps_rule1 = norm(A*x-b,2);
-            fprintf('Epsilon 1 is %f \n', eps_rule1) 
+            %fprintf('Epsilon 1 is %f \n', eps_rule1) 
         case 'DDFG'
             eps_rule1 = max(A*x-b)/n;            
         case 'automatic'
             if norm(A*x-b) < sqrt(eps1)/100
                 eps1 = eps1/10; 
-                fprintf('Epsilon 1 is %f \n', eps1)
+                %fprintf('Epsilon 1 is %f \n', eps1)
             end  
             eps1 = eps1/2; 
             eps1 = max(eps1,epsmin);
-            fprintf('Epsilon 1 is %.16f \n', eps1)
+            %fprintf('Epsilon 1 is %.16f \n', eps1)
     end
      
 %     eps1 = max(min(eps1,eps_rule1),epsmin);
@@ -69,8 +69,8 @@ for it=1:N
     z0 = max(norm(A*x-b,2), eps1);
     z = max(abs(x), eps2);
     
-     fprintf('z0 is %f \n', z0)
-%     fprintf('z LSQR %f \n', flag)
+    %     fprintf('z0 is %f \n', z0)
+    %     fprintf('z LSQR %f \n', flag)
        
     %z = (abs(lambda*x).^2 + eps2);
 
@@ -94,24 +94,24 @@ for it=1:N
 %     [x_cg, flag] = pcg(A_expanded,b_expanded, [], Nlsp,[],[]);
     BLA=A_expanded*x-b_expanded;
     EQNORMAL_RHS= norm(A_expanded.'*b_expanded);
-    fprintf('Norm of A^T*b %f \n', EQNORMAL_RHS)
-    fprintf('flag LSQR %f \n', flag)
-    fprintf('Norm of x %f \n', norm(x))
-    fprintf('Norm of b %f \n', norm(b_expanded))
-    fprintf('Norm of Ax-b %f \n', norm(BLA))
-%     disp('lsqr did not converged 'num2str(norm(x)))
-%     norm(x_cg)
-    fprintf('\n')
+% $$$     fprintf('Norm of A^T*b %f \n', EQNORMAL_RHS)
+% $$$     fprintf('flag LSQR %f \n', flag)
+% $$$     fprintf('Norm of x %f \n', norm(x))
+% $$$     fprintf('Norm of b %f \n', norm(b_expanded))
+% $$$     fprintf('Norm of Ax-b %f \n', norm(BLA))
+% $$$ %     disp('lsqr did not converged 'num2str(norm(x)))
+% $$$ %     norm(x_cg)
+% $$$     fprintf('\n')
     x_track{it} = x;
        
     if flag ==  1
-        fprintf('lsqr did not converged');
+        %fprintf('lsqr did not converged');
         return;
     end
 %     x = A_expanded \ b_expanded;   
     
     if norm(x_old-x) < threshold
-        fprintf('IRLS converged');
+        %fprintf('IRLS converged');
         break;
     end
 end

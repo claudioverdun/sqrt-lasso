@@ -51,9 +51,17 @@ cf.model  = {'gaussian'};
 %-----------------------------------------------------------------
 % the algorithms to test 
 
-cf.alg{1}.name    = 'cvx_slasso';
-cf.alg{1}.legend    = 'cvx_slasso, lambda=opt';
-cf.alg{1}.lambda  = sqrt(log(cf.n/cf.m));
+cf.alg                = {}
+
+% $$$ cf.alg{end+1}.name    = 'cvx_slasso';
+% $$$ cf.alg{end  }.legend  = 'cvx_slasso, lambda=opt';
+% $$$ cf.alg{end  }.lambda  = sqrt(log(cf.n/cf.m));
+
+
+cf.alg{end+1}.name    = 'irls_slasso';
+cf.alg{end  }.legend  = 'irls_slasso, lambda=opt';
+cf.alg{end  }.lambda  = sqrt(log(cf.n/cf.m));
+cf.alg{end  }.lambda  = sqrt(log(n)/m); % from Claudio
 
 cf.runs   = 1000;
 cf.matfile='results.mat';
@@ -154,6 +162,32 @@ for irun=1:cf.runs
                     minimize(norm(A*x - b,2)*cf.m + 2*lambda*norm(x,1))
                     cvx_end
                     ws.xhat = x;
+                  case 'irls_slasso',
+                    
+                    A=squeeze(ws.meas(imodel,:,:));
+                    b=ws.y(imodel,:).';
+                    lambda = cf.alg{ialg}.lambda;
+                    s      = ws.s;
+
+                    %epsilon decay rule for ||Ax-b||_2
+                    eps1=10;
+                    
+                    %epsilon decay rule for ||x||_1
+                    eps2=10;
+
+                    % eps min in oder to avoid numerical problems
+                    epsmin = 10^-10;
+
+                    %outer iterations
+                    N = 100;
+
+                    %inner iterations
+                    Nlsp=10000;
+
+                    x_init = randn(size(A,2),1);
+                    [x,x_track,eps1_track,eps2_track] = ...
+                        IRLS_sqrt_LASSO(A,b,s,lambda,eps1,eps2,x_init,N,Nlsp,epsmin,'automatic','KMS');
+                    ws.xhat=x;
                 end
 
 % $$$                 figure(2);
