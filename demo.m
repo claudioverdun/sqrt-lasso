@@ -19,12 +19,13 @@ cf        = struct;
 
 %----------------------------------------------------------------
 % good setting for mubs
-cf.n      = 1021;%1024
+cf.n      = 256;
+
 %----------------------------------------------------------------
 
 
 
-cf.m      = floor(cf.n/4);
+cf.m      = 64;
 cf.s      = [3:floor(.08*cf.m):floor(.6*cf.m)];
 
 %-----------------------------------------------------------------
@@ -54,14 +55,13 @@ cf.model  = {'gaussian'};
 cf.alg                = {}
 
 cf.alg{end+1}.name    = 'cvx_slasso';
-cf.alg{end  }.legend  = 'cvx_slasso, lambda=opt';
-cf.alg{end  }.lambda  = sqrt(log(cf.n/cf.m)/m);
+cf.alg{end  }.legend  = 'cvx_slasso, lambda=opt1';
+cf.alg{end  }.lambda  = sqrt(log(cf.n)/cf.m);
 
 
 cf.alg{end+1}.name    = 'irls_slasso';
 cf.alg{end  }.legend  = 'irls_slasso, lambda=opt';
-cf.alg{end  }.lambda  = sqrt(log(cf.n/cf.m)/m);
-cf.alg{end  }.lambda  = sqrt(log(n)/m); % from Claudio
+cf.alg{end  }.lambda  = sqrt(log(cf.n)/cf.m)/2; % from Claudio
 
 cf.runs   = 1000;
 cf.matfile='results.mat';
@@ -93,24 +93,26 @@ for irun=1:cf.runs
     % generate random matrices
     %--------------------------------------------------------------
     for imodel=1:cf.nmodels
+        %measnorm=sqrt(cf.m);
+        measnorm=1;
         switch(cf.model{imodel})            
           case 'cnormal',
-            ws.meas(imodel,:,:) = (randn(cf.m,cf.n)+1i*randn(cf.m,cf.n))/sqrt(cf.m/2);
+            ws.meas(imodel,:,:) = (randn(cf.m,cf.n)+1i*randn(cf.m,cf.n))/measnorm/sqrt(2);
           case 'gaussian',
-            ws.meas(imodel,:,:) = randn(cf.m,cf.n)/sqrt(cf.m);
+            ws.meas(imodel,:,:) = randn(cf.m,cf.n)/measnorm;
           case 'bernoulli',       
-            ws.meas(imodel,:,:) = sign(rand(cf.m,cf.n)-.5)/sqrt(cf.m);
+            ws.meas(imodel,:,:) = sign(rand(cf.m,cf.n)-.5)/measnorm;
           case 'binary'
-            ws.meas(imodel,:,:) = randi([0,1],cf.m,cf.n)/sqrt(cf.m/2);
+            ws.meas(imodel,:,:) = randi([0,1],cf.m,cf.n)/measnorm/sqrt(2);
           case 'dct'
             % generate cf.m uniformly random selected rows
             rows=randperm(cf.n,cf.m);
-            ws.meas(imodel,:,:)=dctsubmtx(rows-1,0:cf.n-1,cf.n)*sqrt(cf.n)/sqrt(cf.m);          
+            ws.meas(imodel,:,:)=dctsubmtx(rows-1,0:cf.n-1,cf.n)*sqrt(cf.n)/measnorm;          
           case 'dft'
             % generate cf.m uniformly random selected rows
             rows=randperm(cf.n,cf.m);
             W=dftmtx(cf.n);
-            ws.meas(imodel,:,:)=W(rows,:)/sqrt(cf.m);                      
+            ws.meas(imodel,:,:)=W(rows,:)/measnorm;                      
         end
         % checking the average of the norms of the columns
         norm(ws.meas(imodel,:,1));

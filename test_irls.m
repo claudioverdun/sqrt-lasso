@@ -34,18 +34,10 @@ b=A*x0+normrnd(0,1,[100,1]);
 
 %CVX solution
 
-if 0
 cvx_begin quiet
 cvx_precision low
 variable y(n)
 minimize(1/sqrt(m)*norm(A*y - b,2) + lambda*norm(y,1))
-cvx_end
-end
-
-cvx_begin quiet
-cvx_precision low
-variable y(n)
-minimize(1/m*norm(A*y - b,2) + lambda*norm(y,1))
 cvx_end
 
 
