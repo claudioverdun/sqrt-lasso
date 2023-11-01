@@ -1,0 +1,118 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{pgfplots.groupplots}
+\pgfplotsset{compat=1.16}
+\usepackage{pgfplotstable}
+\usetikzlibrary{pgfplots.colorbrewer}
+\pgfplotsset{
+        cycle from colormap manual style/.style={
+           % x=3cm,y=10pt,ytick=\empty,
+            %stack plots=y,
+            every axis plot/.style={line width=1pt},
+        }}
+
+%
+\usetikzlibrary{external}
+\tikzset{external/system call={pdflatex \tikzexternalcheckshellescape --extra-mem-top=10000000 --extra-mem-bot=10000000 -halt-on-error 
+-interaction=batchmode -jobname "\image" "\texsource" && % or ;
+pdftops -eps "\image".pdf }}
+\tikzset{external/force remake}
+\tikzexternalize[shell escape=-enable-write18]
+
+\newcommand{\norm}[1]{\left\lVert #1\right\rVert}
+%
+%\pgfplotsset{select coords between index/.style 2 args={
+%    x filter/.code={
+%        \ifnum\coordindex<#1\def\pgfmathresult{}\fi
+%        \ifnum\coordindex>#2\def\pgfmathresult{}\fi
+%    }
+%}}
+
+\begin{document}%
+
+\begin{tikzpicture}[scale=0.8]
+\pgfplotstableread[col sep=space]{convergence_noiseless.csv}{\rat}
+\begin{axis}[ 
+cycle list/Dark2,
+cycle from colormap manual style,
+ymode=log,
+%width = 100mm,
+xlabel={Number of iterations, $t$},
+ylabel={Objective gap, $f_{\varepsilon^t}(x^t) - f_0(x^*)$},
+%y tick label style={ yshift = { \ifthenelse{\ticknum==0}{-0.5em}{0em}} }, %{yshift={ -0.5em}},
+%ymin = 0.2,
+%ymax=1.01,
+mark size=1.0pt,
+%legend style={at={(1.05,0.95)},anchor= north west ,font=\fontsize{8}{8}\selectfont},
+legend style={at={(0.02,0.02)},anchor= south west ,font=\fontsize{8}{8}\selectfont},
+legend cell align={left},
+legend columns=1
+]
+\addplot table[x=Nit, y=sqrt]{\rat};
+\addplot table[x=Nit, y=fn]{\rat};
+\addplot table[x=Nit, y=sigma]{\rat};
+\addplot table[x=Nit, y=Rn]{\rat};
+\addplot table[x=Nit, y=exp]{\rat};
+\addplot table[x=Nit, y=sqrt_restart]{\rat};
+%\addplot[Green, thick,line width=1pt] table[x=noise, y=block]{\rat};
+%\addplot[Green, dashed, mark = square*, mark size=2pt, thick,line width=1pt] table[x=noise, y=block_adapt]{\rat};
+%\addplot[Orange,thick,line width=1pt] table[x=noise, y=log]{\rat};
+%\addplot[Orange, dashed,thick, mark = square*, mark size=2pt , line width=1pt] table[x=noise, y=log_adapt]{\rat};
+\legend{
+sqrt,
+fn,
+$\sigma_s$,
+$R_{s+1}$,
+$0.5^t$,
+sqrt + restart
+}
+\end{axis}
+\end{tikzpicture}
+
+\begin{tikzpicture}[scale=0.8]
+\pgfplotstableread[col sep=space]{convergence_noisy.csv}{\rat}
+\begin{axis}[ 
+cycle list/Dark2,
+cycle from colormap manual style,
+ymode=log,
+%width = 100mm,
+xlabel={Number of iterations, $t$},
+ylabel={Objective gap, $f_{\varepsilon^t}(x^t) - f_0(x^*)$},
+%y tick label style={ yshift = { \ifthenelse{\ticknum==0}{-0.5em}{0em}} }, %{yshift={ -0.5em}},
+%ymin = 0.2,
+ymax=500,
+mark size=1.0pt,
+%legend style={at={(1.05,0.95)},anchor= north west ,font=\fontsize{8}{8}\selectfont},
+legend style={at={(0.8,0.98)},anchor= north east ,font=\fontsize{8}{8}\selectfont},
+legend cell align={left},
+legend columns=1
+]
+\addplot table[x=Nit, y=sqrt]{\rat};
+\addplot table[x=Nit, y=fn]{\rat};
+\addplot table[x=Nit, y=sigma]{\rat};
+\addplot table[x=Nit, y=Rn]{\rat};
+\addplot table[x=Nit, y=exp]{\rat};
+\addplot table[x=Nit, y=sqrt_restart]{\rat};
+%\addplot[Green, thick,line width=1pt] table[x=noise, y=block]{\rat};
+%\addplot[Green, dashed, mark = square*, mark size=2pt, thick,line width=1pt] table[x=noise, y=block_adapt]{\rat};
+%\addplot[Orange,thick,line width=1pt] table[x=noise, y=log]{\rat};
+%\addplot[Orange, dashed,thick, mark = square*, mark size=2pt , line width=1pt] table[x=noise, y=log_adapt]{\rat};
+\legend{
+sqrt,
+fn,
+$\sigma_s$,
+$R_{s+1}$,
+$0.5^t$,
+sqrt + restart
+}
+\end{axis}
+\end{tikzpicture}
+
+
+\end{document}
