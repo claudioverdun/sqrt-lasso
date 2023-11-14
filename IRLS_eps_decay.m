@@ -98,7 +98,7 @@ if strcmp(flag,'notransp') % Compute A*x
 elseif strcmp(flag,'transp') % Compute A'*x
     x_1 = x(1:m);
     x_2 = x((m+1):length(x));
-    y = A.'*x_1 /sqrt(z0*m);
+    y = A'*x_1 /sqrt(z0*m);
     y = y + sqrt(lambda)*x_2./sqrt(z);
 end
 end

@@ -3,7 +3,7 @@ addpath('/../../')
 rng(123);
 
 samples = 150:10:250;
-trials = 30;
+trials = 5;
 
 n = 1000;
 s = 50;
@@ -15,21 +15,20 @@ times = zeros(7,length(samples), trials);
 objective = zeros(7,length(samples), trials);
 % x_rec = zeros(7,length(samples), trials, n);
 
+lambda_opt = sqrt( log(n)/m);%s * sqrt( log(n)/m);
+lambda = lambda_opt/1.5;
 
+eps2 = 10^-8;
+eps1 = lambda*10^-8;
+eps0 = 10^-6;
 
 mu = 0;
-
+L = lambda/ sqrt(eps2) + 1.0/sqrt(eps1);
 SNR = 40;
 
 for si = 1:length(samples)
     m = samples(si);
-    lambda_opt = sqrt( log(n)/m);%s * sqrt( log(n)/m);
-    lambda = lambda_opt/1.5;
     
-    eps2 = 10^-8;
-    eps1 = lambda*10^-8;
-    eps0 = 10^-3;
-    L = lambda/ sqrt(eps2) + 1.0/sqrt(eps1);
     fprintf('m %d:',m)
     
     for t=1:trials
@@ -45,29 +44,29 @@ for si = 1:length(samples)
         Lmax = norm(A,2);
 
         % % single run methods
-        tic
-        x_1 = ITEM_sqrtlasso(A,b,lambda,mu,L,eps1,eps2,x0,100000);
-        times(1,si,t) = toc;
-        errors(1,si,t) = norm(x_1 - x)/norm(x);
-        ratios(1,si,t) = s_ratio(x_1,s,s);
-        ratio2s(1,si,t) = s_ratio(x_1,s,2*s);
-        objective(1,si,t) = norm(A*x_1 - b)/sqrt(m) + lambda*norm(x_1,1);
-        tic
-        x_2 = proximal_gradient(A,b,0.0,lambda,L,x0,100000);
-        times(2,si,t) = toc;
-        errors(2,si,t) = norm(x_2 - x)/norm(x);
-        ratios(2,si,t) = s_ratio(x_2,s,s);
-        ratio2s(2,si,t) = s_ratio(x_2,s,2*s);
-        objective(2,si,t) = norm(A*x_2 - b)/sqrt(m) + lambda*norm(x_2,1);
-        if t <= 5 
-            tic
-            x_3 = proximal_newton(A,b,0.0,lambda,x0,100,1000);
-            times(3,si,t) = toc;
-            errors(3,si,t) = norm(x_3 - x)/norm(x);
-            ratios(3,si,t) = s_ratio(x_3,s,s);
-            ratio2s(3,si,t) = s_ratio(x_3,s,2*s);
-            objective(3,si,t) = norm(A*x_3 - b)/sqrt(m) + lambda*norm(x_3,1);
-        end
+%         tic
+%         x_1 = ITEM_sqrtlasso(A,b,lambda,mu,L,eps1,eps2,x0,100000);
+%         times(1,si,t) = toc;
+%         errors(1,si,t) = norm(x_1 - x)/norm(x);
+%         ratios(1,si,t) = s_ratio(x_1,s,s);
+%         ratio2s(1,si,t) = s_ratio(x_1,s,2*s);
+%         objective(1,si,t) = norm(A*x_1 - b)/sqrt(m) + lambda*norm(x_1,1);
+%         tic
+%         x_2 = proximal_gradient(A,b,0.0,lambda,L,x0,100000);
+%         times(2,si,t) = toc;
+%         errors(2,si,t) = norm(x_2 - x)/norm(x);
+%         ratios(2,si,t) = s_ratio(x_2,s,s);
+%         ratio2s(2,si,t) = s_ratio(x_2,s,2*s);
+%         objective(2,si,t) = norm(A*x_2 - b)/sqrt(m) + lambda*norm(x_2,1);
+%         if t <= 5 
+%             tic
+%             x_3 = proximal_newton(A,b,0.0,lambda,x0,100,1000);
+%             times(3,si,t) = toc;
+%             errors(3,si,t) = norm(x_3 - x)/norm(x);
+%             ratios(3,si,t) = s_ratio(x_3,s,s);
+%             ratio2s(3,si,t) = s_ratio(x_3,s,2*s);
+%             objective(3,si,t) = norm(A*x_3 - b)/sqrt(m) + lambda*norm(x_3,1);
+%         end
         tic
         x_4 = smooth_concomitant_lasso_v2(A, b, 10^-6, 1000, 10, eps1, lambda, x0);
         times(4,si,t) = toc;
@@ -83,12 +82,12 @@ for si = 1:length(samples)
         ratio2s(5,si,t) = s_ratio(x_5,s,2*s);
         objective(5,si,t) = norm(A*x_5 - b)/sqrt(m) + lambda*norm(x_5,1);
         tic
-        x_6 = IRLS_eps_decay(A,b,lambda,0.5,x0,1000,100,'sigma',s,'lsqr_fun');
-        times(6,si,t) = toc;
-        errors(6,si,t) = norm(x_6 - x)/norm(x); 
-        ratios(6,si,t) = s_ratio(x_6,s,s);
-        ratio2s(6,si,t) = s_ratio(x_6,s,2*s);
-        objective(6,si,t) = norm(A*x_6 - b)/sqrt(m) + lambda*norm(x_6,1);
+%         x_6 = IRLS_eps_decay(A,b,lambda,0.5,x0,1000,100,'sigma',s,'lsqr_fun');
+%         times(6,si,t) = toc;
+%         errors(6,si,t) = norm(x_6 - x)/norm(x); 
+%         ratios(6,si,t) = s_ratio(x_6,s,s);
+%         ratio2s(6,si,t) = s_ratio(x_6,s,2*s);
+%         objective(6,si,t) = norm(A*x_6 - b)/sqrt(m) + lambda*norm(x_6,1);
         tic
         x_7 = IRLS_eps_decay_restart(A,b,lambda,eps0,x0,1000,100,10,'sqrt',s,'lsqr_fun');
         times(7,si,t) = toc;
@@ -144,16 +143,23 @@ labels = {'m','ITEM', 'prox_grad',...
           'irls_sqrt_restart'};
 results_err = [samples.' avg_error.'];
 results_err = array2table(results_err,'VariableNames',labels);
-writetable(results_err,'oversampling_err.csv','Delimiter',' ')
+writetable(results_err,'oversampling_err_sme.csv','Delimiter',' ')
 
 results_time = [samples.' avg_time.'];
 results_time = array2table(results_time,'VariableNames',labels);
-writetable(results_time,'oversampling_time.csv','Delimiter',' ')
+writetable(results_time,'oversampling_time_sme.csv','Delimiter',' ')
 
 results_ratio = [samples.' avg_ratios.'];
 results_ratio = array2table(results_ratio,'VariableNames',labels);
-writetable(results_ratio,'oversampling_ratio.csv','Delimiter',' ')
+writetable(results_ratio,'oversampling_ratio_sme.csv','Delimiter',' ')
 
 results_ratio2 = [samples.' avg_ratio2s.'];
 results_ratio2 = array2table(results_ratio2,'VariableNames',labels);
-writetable(results_ratio2,'oversampling_ratio2.csv','Delimiter',' ')
+writetable(results_ratio2,'oversampling_ratio2_sme.csv','Delimiter',' ')
+
+function ratio = s_ratio(x,s,st)
+n = length(x);
+x_tr = quantile(abs(x), 1.0*(n-st) / n);
+idx = abs(x) >= x_tr;
+ratio = 1.0*sum(idx(1:s)) / s;
+end

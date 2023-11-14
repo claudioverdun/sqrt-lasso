@@ -15,26 +15,29 @@ times = zeros(7,length(samples), trials);
 objective = zeros(7,length(samples), trials);
 % x_rec = zeros(7,length(samples), trials, n);
 
-
-
 mu = 0;
 
 SNR = 40;
 
 for si = 1:length(samples)
     m = samples(si);
+    
     lambda_opt = sqrt( log(n)/m);%s * sqrt( log(n)/m);
     lambda = lambda_opt/1.5;
-    
     eps2 = 10^-8;
     eps1 = lambda*10^-8;
     eps0 = 10^-3;
     L = lambda/ sqrt(eps2) + 1.0/sqrt(eps1);
+
     fprintf('m %d:',m)
     
     for t=1:trials
         fprintf('*')
-        A = randn(m,n);
+%         A = randn(m,n);
+%         A = exprnd(1.0,m,n) .* (3 - 2*randi(2,m,n));
+        A = dftmtx(n);
+        idx = randsample(n,m,true);
+        A = sqrt(n)*A(idx,:);
 
         x = [ones(s,1) ; zeros(n-s,1)];
         b = A * x;
