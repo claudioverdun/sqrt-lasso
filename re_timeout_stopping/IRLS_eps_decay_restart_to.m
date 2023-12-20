@@ -1,9 +1,12 @@
-function x = IRLS_eps_decay_restart(A,b,lambda,eps0,x0,N,Nlsp,Nrestart,decay,s,solver)
+function [x,time] = IRLS_eps_decay_restart_to(A,b,lambda,eps0,x0,Nlsp,N_it,decay,s,solver, x_tr, threshold, timeout)
+time = 0;
+tic;
+
 n = size(A,2);
 m = length(b);
 x = x0;
-threshold = 10.^-3;%10.^-6;
- 
+%threshold = 10.^-3;%10.^-6;
+
 f_min = realmax;
 
 if strcmp(decay,'exp')
@@ -14,9 +17,10 @@ end
 
 % f_vals = zeros(N,1);
 
-N_it = floor(N / Nrestart);
+% N_it = floor(N / Nrestart);
 epst = eps0;
-for rit=1:Nrestart
+rit = 1;
+while true
     offset = (rit-1) * N_it;
     
     for it=1:N_it
@@ -73,13 +77,31 @@ for rit=1:Nrestart
     %     end
     %     x = A_expanded \ b_expanded;
         
-        if norm(x_old-x) < threshold * norm(x_old)
+        if norm(x_tr-x) < threshold * norm(x_tr)
+            dt = toc;
+            time = time + dt;
             break;
         end
+    
+        dt = toc;
+        time = time + dt;
+        if time >= timeout
+            break;
+        end
+        tic;
+    end
+    if norm(x_tr-x) < threshold * norm(x_tr)
+        break;
+    end
+
+    if time >= timeout
+        break;
     end
     epst = eps2;
+    rit = rit + 1;
 %     threshold = threshold*0.1;
 end
+% i = 100;
 end
 
 function f_val = objective(A,x,b,lambda,eps1,eps2)

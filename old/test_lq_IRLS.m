@@ -6,9 +6,9 @@
 SNR_level = 10:10:90;
 trials = 5;
 
-m = 300;
+m = 400;
 n = 1000;
-s = 50;
+s = 5;
 
 errors = zeros(7,length(SNR_level), trials);
 times = zeros(7,length(SNR_level), trials);
@@ -87,8 +87,8 @@ for snri = 1:length(SNR_level)
     fprintf('\n')
 end
 
-avg_error = mean(errors,3);
-avg_time = mean(times,3);
+avg_error = median(errors,3);
+avg_time = median(times,3);
 
 figure
 semilogy(SNR_level, avg_error(1:7,:))

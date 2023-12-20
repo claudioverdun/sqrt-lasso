@@ -6,7 +6,7 @@ rng(123);
 % 4 s(N)
 % 5 10^{-N}
 
-m = 250;
+m = 300;
 n = 1000;
 s = 50;
 A = randn(m,n);
@@ -22,7 +22,7 @@ lambda_opt = sqrt( log(n)/m); %s*sqrt( log(n)/m);
 lambda = lambda_opt/1.5;
 %lambda = lambda / sqrt(m);
 
-eps0 = 10^-5;
+eps0 = 10^-3;
 
 Nit = 1000;
 lsqr_it = 10000;

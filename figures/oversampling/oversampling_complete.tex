@@ -1,0 +1,216 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{pgfplots.groupplots}
+%\usetikzlibrary{plotmarks}
+
+\pgfplotsset{compat=newest}
+\usepackage{pgfplotstable}
+\usetikzlibrary{pgfplots.colorbrewer}
+\pgfplotsset{
+        cycle from colormap manual style/.style={
+           % x=3cm,y=10pt,ytick=\empty,
+            %stack plots=y,
+            every axis plot/.style={line width=1pt},
+        }}
+
+%\usepackage{lipsum}
+\usetikzlibrary{external}
+\tikzset{external/system call={pdflatex \tikzexternalcheckshellescape --extra-mem-top=10000000 --extra-mem-bot=10000000 -halt-on-error 
+-interaction=batchmode -jobname "\image" "\texsource" && % or ;
+pdftops -eps "\image".pdf }}
+\tikzset{external/force remake}
+\tikzexternalize[shell escape=-enable-write18]
+
+\newcommand{\norm}[1]{\left\lVert #1\right\rVert}
+%
+%\pgfplotsset{select coords between index/.style 2 args={
+%    x filter/.code={
+%        \ifnum\coordindex<#1\def\pgfmathresult{}\fi
+%        \ifnum\coordindex>#2\def\pgfmathresult{}\fi
+%    }
+%}}
+
+\begin{document}%
+
+%
+\begin{tikzpicture}[scale=0.89]
+%
+\pgfplotstableread[col sep=space]{oversampling_01_err.csv}{\errsm}
+\pgfplotstableread[col sep=space]{oversampling_err.csv}{\err}
+\pgfplotstableread[col sep=space]{oversampling_01_time.csv}{\timesm}
+\pgfplotstableread[col sep=space]{oversampling_time.csv}{\time}
+\pgfplotstableread[col sep=space]{oversampling_01_ratio.csv}{\sfrsm}
+\pgfplotstableread[col sep=space]{oversampling_ratio.csv}{\sfr}
+
+\pgfplotsset{
+	cycle list/Dark2,
+	cycle from colormap manual style,
+    scaled y ticks = false,
+    axis on top,
+    %xtick = data,
+    xticklabel style={text width=2em,align=center},
+    xminorticks=true,
+    yminorticks=true,
+    ylabel shift={-0em},
+    ylabel style={align=center},
+	grid=both,
+}
+       
+    \begin{groupplot}[ 
+        group style={
+        group size=2 by 3,
+        vertical sep=40pt,
+        horizontal sep=40pt
+        },
+    ]
+%
+    \nextgroupplot[		
+    		 ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+            ylabel={Relative error, $\norm{x_T-x}_2/\norm{x}_2$},
+            title={$\lambda = \tfrac{3}{20}\sqrt{\frac{\log(p)}{n}}$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={Number of samples, $n$}
+    ]
+\addplot table[x=m, y=ITEM]{\errsm};
+\addplot table[x=m, y=prox_grad]{\errsm};
+\addplot table[x=m, y=prox_newton]{\errsm};
+\addplot table[x=m, y=concomitant]{\errsm};
+\addplot table[x=m, y=irls_sqrt]{\errsm};
+\addplot table[x=m, y=irls_sigma]{\errsm};
+\addplot table[x=m, y=irls_sqrt_restart]{\errsm};
+    
+%    
+    % (Relative) Coordinate at top of the first plot
+%    \coordinate (c11) at (rel axis cs:0,1);
+%
+\nextgroupplot[		
+    		 ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+            %ylabel={Relative error, $\norm{x_T-x}_2/\norm{x}_2$},
+            title={$\lambda = \tfrac{3}{2} \sqrt{\frac{\log(p)}{n} }$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={Number of samples, $n$}
+    ]
+\addplot table[x=m, y=ITEM]{\err};
+\addplot table[x=m, y=prox_grad]{\err};
+\addplot table[x=m, y=prox_newton]{\err};
+\addplot table[x=m, y=concomitant]{\err};
+\addplot table[x=m, y=irls_sqrt]{\err};
+\addplot table[x=m, y=irls_sigma]{\err};
+\addplot table[x=m, y=irls_sqrt_restart]{\err};
+%    
+%    
+%    % (Relative) Coordinate at top of the first plot
+%    \coordinate (c12) at (rel axis cs:0,1);
+%
+    \nextgroupplot[
+            ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+            ylabel={Runtime, sec},
+            %title={$\lambda = \tfrac{3}{20}\frac{\log(p)}{n}$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={Number of samples, $n$}
+    ]
+\addplot table[x=m, y=ITEM]{\timesm};
+\addplot table[x=m, y=prox_grad]{\timesm};
+\addplot table[x=m, y=prox_newton]{\timesm};
+\addplot table[x=m, y=concomitant]{\timesm};
+\addplot table[x=m, y=irls_sqrt]{\timesm};
+\addplot table[x=m, y=irls_sigma]{\timesm};
+\addplot table[x=m, y=irls_sqrt_restart]{\timesm};
+%    
+%    % (Relative) Coordinate at top of the second plot
+%    \coordinate (c21) at (rel axis cs:-0.1,0);% I moved this to the upper right corner
+%     
+    \nextgroupplot[
+                        ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+            %ylabel={Runtime, sec},
+            %title={$\lambda = \tfrac{3}{20}\frac{\log(p)}{n}$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={Number of samples, $n$}
+    ]
+\addplot table[x=m, y=ITEM]{\time};
+\addplot table[x=m, y=prox_grad]{\time};
+\addplot table[x=m, y=prox_newton]{\time};
+\addplot table[x=m, y=concomitant]{\time};
+\addplot table[x=m, y=irls_sqrt]{\time};
+\addplot table[x=m, y=irls_sigma]{\time};
+\addplot table[x=m, y=irls_sqrt_restart]{\time};
+%
+\nextgroupplot[
+            %ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+            ylabel={Support recovery failure ratio},
+            %title={$\lambda = \tfrac{3}{20}\frac{\log(p)}{n}$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={Number of samples, $n$}
+    ]
+\addplot table[x=m, y=ITEM]{\sfrsm};
+\addplot table[x=m, y=prox_grad]{\sfrsm};
+\addplot table[x=m, y=prox_newton]{\sfrsm};
+\addplot table[x=m, y=concomitant]{\sfrsm};
+\addplot table[x=m, y=irls_sqrt]{\sfrsm};
+\addplot table[x=m, y=irls_sigma]{\sfrsm};
+\addplot table[x=m, y=irls_sqrt_restart]{\sfrsm};
+    
+%    % (Relative) Coordinate at top of the second plot
+%    \coordinate (c21) at (rel axis cs:-0.1,0);% I moved this to the upper right corner
+%     
+    \nextgroupplot[
+                       	%ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+           % ylabel={Runtime, sec},
+            %title={$\lambda = \tfrac{3}{20}\frac{\log(p)}{n}$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={Number of samples, $n$},
+            legend style={legend columns=4},
+            legend to name= leg1
+    ]
+\addplot table[x=m, y=ITEM]{\sfr};
+\addplot table[x=m, y=prox_grad]{\sfr};
+\addplot table[x=m, y=prox_newton]{\sfr};
+\addplot table[x=m, y=concomitant]{\sfr};
+\addplot table[x=m, y=irls_sqrt]{\sfr};
+\addplot table[x=m, y=irls_sigma]{\sfr};
+\addplot table[x=m, y=irls_sqrt_restart]{\sfr};
+%
+\legend{
+ITEM,
+Proximal Gradient,
+Proximal Newton,
+Concomitant LASSO,
+IRLS(sqrt),
+IRLS($\sigma$),
+IRLS(sqrt)+restart(1000),
+}
+%    
+%    % (Relative) Coordinate at top of the second plot
+\coordinate (c22) at (rel axis cs:-0.1,0);
+%    
+\end{groupplot}
+\node[below] at (c22 |- current bounding box.south)
+  {\pgfplotslegendfromname{leg1}};
+      
+\end{tikzpicture}%
+
+\end{document}

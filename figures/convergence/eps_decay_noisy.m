@@ -6,23 +6,25 @@ rng(123);
 % 4 s(N)
 % 5 10^{-N}
 
-m = 20;
-n = 100;
-s = 5;
+m = 300;
+n = 1000;
+s = 50;
 A = randn(m,n);
-x = [ones(5,1) ; zeros(95,1)];
+x = [ones(s,1) ; zeros(n-s,1)];
 x0 = randn(n,1);
-b = A * x;
+b_t = A * x;
 
 snr = 40;
 sigma = sqrt(norm(b)^2 * 10^(-snr/10));
-b = b + sigma*randn(size(b)); 
+b = b_t + sigma*randn(size(b_t)); 
+
+noise_norm = norm(b - b_t);
 
 lambda_opt = sqrt( log(n)/m); %s*sqrt( log(n)/m);
 lambda = lambda_opt/1.5;
 %lambda = lambda / sqrt(m);
 
-eps0 = 10^-5;
+eps0 = 10^-3;
 
 Nit = 2000;
 lsqr_it = 10000;
@@ -54,12 +56,13 @@ x_rec = zeros(7,n);
 % x_rec(5,:) = xr5;
 % x_rec(6,:) = xr6;
 
-f_min = min(lambda * norm(x,1), min(min(f_vals)) - 10^-16);
+%f_min = min(norm(A*x - b) + lambda * norm(x,1), min(min(f_vals)) - 10^-16);
+f_min = min(norm(A*x - b) + lambda * norm(x,1));
 
 figure
-semilogy(1:Nit, f_vals -f_min)
+semilogy(1:Nit, [f_vals ; repelem(f_min,Nit) ; repelem(noise_norm,Nit)])
 title('Objective')
-legend({'sqrt','fn','0.5*sigma','0.5*Rn','0.5*','1/k', 'sqrt restart'})%,'IRLS(1000)','Half Accelerated IRLS','Half Accelerated IRLS v2'});%,'Half Accelerated IRLS'})
+legend({'sqrt','fn','0.5*sigma','0.5*Rn','0.5*','1/k', 'sqrt restart', 'f(x^*)', 'norm(e)'})%,'IRLS(1000)','Half Accelerated IRLS','Half Accelerated IRLS v2'});%,'Half Accelerated IRLS'})
 
 
 labels = {'Nit', 'sqrt',...

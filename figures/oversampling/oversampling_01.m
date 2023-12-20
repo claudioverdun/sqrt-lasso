@@ -27,7 +27,7 @@ SNR = 40;
 for si = 1:length(samples)
     m = samples(si);
     lambda_opt = sqrt( log(n)/m);%s * sqrt( log(n)/m);
-    lambda = lambda_opt/1.5;%d/10;
+    lambda = lambda_opt/1.5/10;
     
     eps2 = 10^-8;
     eps1 = lambda*10^-8;
@@ -40,7 +40,6 @@ for si = 1:length(samples)
         A = randn(m,n);
 
         x = [ones(s,1) ; zeros(n-s,1)];
-%         x = x(randperm(n));
         b = A * x;
 %         sigma = sqrt(norm(b)^2 * 10.0^(-SNR/10.0));
 %         b = b + sigma*randn(size(b)); 
@@ -145,16 +144,16 @@ labels = {'m','ITEM', 'prox_grad',...
           'irls_sqrt_restart'};
 results_err = [samples.' avg_error.'];
 results_err = array2table(results_err,'VariableNames',labels);
-writetable(results_err,'oversampling_err.csv','Delimiter',' ')
+writetable(results_err,'oversampling_01_err.csv','Delimiter',' ')
 
 results_time = [samples.' avg_time.'];
 results_time = array2table(results_time,'VariableNames',labels);
-writetable(results_time,'oversampling_time.csv','Delimiter',' ')
+writetable(results_time,'oversampling_01_time.csv','Delimiter',' ')
 
 results_ratio = [samples.' avg_ratios.'];
 results_ratio = array2table(results_ratio,'VariableNames',labels);
-writetable(results_ratio,'oversampling_ratio.csv','Delimiter',' ')
+writetable(results_ratio,'oversampling_01_ratio.csv','Delimiter',' ')
 
 results_ratio2 = [samples.' avg_ratio2s.'];
 results_ratio2 = array2table(results_ratio2,'VariableNames',labels);
-writetable(results_ratio2,'oversampling_ratio2.csv','Delimiter',' ')
+writetable(results_ratio2,'oversampling_01_ratio2.csv','Delimiter',' ')

@@ -1,0 +1,447 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{pgfplots.groupplots}
+\pgfplotsset{compat=1.16}
+\usepackage{pgfplotstable}
+\usetikzlibrary{pgfplots.colorbrewer}
+
+
+%\pgfplotsset{
+%        cycle from colormap manual style/.style={
+%           % x=3cm,y=10pt,ytick=\empty,
+%            %stack plots=y,
+%            every axis plot/.style={line width=1pt},
+%        }}
+
+%\pgfplotsset{
+%        % initialize Dark2
+%        every axis plot/.style={line width=1pt},
+%        cycle list/Dark2,
+%        % combine it with 'mark list*':
+%        cycle multiindex* list={
+%            mark list*\nextlist
+%            Dark2\nextlist
+%        },
+%    }
+
+\pgfplotsset{
+        cycle from colormap manual style/.style={
+           % x=3cm,y=10pt,ytick=\empty,
+            %stack plots=y,
+            every axis plot/.style={line width=1pt},
+        }}
+
+\usetikzlibrary{external}
+\tikzset{external/system call={pdflatex \tikzexternalcheckshellescape --extra-mem-top=10000000 --extra-mem-bot=10000000 -halt-on-error 
+-interaction=batchmode -jobname "\image" "\texsource" && % or ;
+pdftops -eps "\image".pdf }}
+\tikzset{external/force remake}
+\tikzexternalize[shell escape=-enable-write18]
+
+\newcommand{\norm}[1]{\left\lVert #1\right\rVert}
+%
+%\pgfplotsset{select coords between index/.style 2 args={
+%    x filter/.code={
+%        \ifnum\coordindex<#1\def\pgfmathresult{}\fi
+%        \ifnum\coordindex>#2\def\pgfmathresult{}\fi
+%    }
+%}}
+
+\begin{document}%
+
+\begin{tikzpicture}[scale=0.8]
+\pgfplotstableread[col sep=space]{lambda_err_restart.csv}{\err}
+\pgfplotstableread[col sep=space]{lambda_err_restart_5.csv}{\errf}
+\pgfplotstableread[col sep=space]{lambda_time_restart.csv}{\time}\pgfplotstableread[col sep=space]{lambda_time_restart_5.csv}{\timef}
+
+\pgfplotsset{
+	cycle list/Dark2,
+	cycle from colormap manual style,
+    scaled y ticks = false,
+    axis on top,
+    %xtick = data,
+    xticklabel style={text width=2em,align=center},
+    xminorticks=true,
+    yminorticks=true,
+    ylabel shift={-0em},
+    ylabel style={align=center},
+	grid=both,
+}
+       
+    \begin{groupplot}[ 
+        group style={
+        group size=2 by 2,
+        vertical sep=40pt,
+        horizontal sep=40pt
+        },
+    ]
+%
+    \nextgroupplot[		
+    		 ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+    		 title = {Relative Error Threshold $10^{-3}$},
+            ylabel={Relative error, $\norm{x_T-x}_2/\norm{x}_2$},
+            %title={$\lambda = \tfrac{3}{20}\sqrt{\frac{\log(p)}{n}}$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={Multiplier $k$ in $\lambda = \tfrac{2}{3} 10^{k} \sqrt{\log p / n} $},
+    ]
+\addplot table[x=mult, y=irls_sqrt]{\err};
+\addplot table[x=mult, y=irls_sigma]{\err};
+\addplot table[x=mult, y=irls_sqrt_restart_10]{\err};
+\addplot table[x=mult, y=irls_sqrt_restart_100]{\err};
+\addplot table[x=mult, y=irls_sqrt_restart_1000]{\err};
+\addplot table[x=mult, y=irls_sqrt_restart_10000]{\err};
+
+\nextgroupplot[		
+    		 ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+    		 title = {Relative Error Threshold $10^{-5}$},
+            %ylabel={Relative error, $\norm{x_T-x}_2/\norm{x}_2$},
+            %title={$\lambda = \tfrac{3}{20}\sqrt{\frac{\log(p)}{n}}$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={Multiplier $k$ in $\lambda = \tfrac{2}{3} 10^{k} \sqrt{\log p / n} $},
+    ]
+\addplot table[x=mult, y=irls_sqrt]{\errf};
+\addplot table[x=mult, y=irls_sigma]{\errf};
+\addplot table[x=mult, y=irls_sqrt_restart_10]{\errf};
+\addplot table[x=mult, y=irls_sqrt_restart_100]{\errf};
+\addplot table[x=mult, y=irls_sqrt_restart_1000]{\errf};
+\addplot table[x=mult, y=irls_sqrt_restart_10000]{\errf};
+
+\nextgroupplot[		
+    		 ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+    		 %title = {Relative Error Threshold $10^-3$},
+            ylabel={Runtime, sec},
+            %title={$\lambda = \tfrac{3}{20}\sqrt{\frac{\log(p)}{n}}$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={Multiplier $k$ in $\lambda = \tfrac{2}{3} 10^{k} \sqrt{\log p / n} $},
+    ]
+\addplot table[x=mult, y=irls_sqrt]{\time};
+\addplot table[x=mult, y=irls_sigma]{\time};
+\addplot table[x=mult, y=irls_sqrt_restart_10]{\time};
+\addplot table[x=mult, y=irls_sqrt_restart_100]{\time};
+\addplot table[x=mult, y=irls_sqrt_restart_1000]{\time};
+\addplot table[x=mult, y=irls_sqrt_restart_10000]{\time};
+    
+    \nextgroupplot[
+                       	ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+            %ylabel={Runtime, sec},
+            %title={$\lambda = \tfrac{3}{20}\frac{\log(p)}{n}$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={Multiplier $k$ in $\lambda = \tfrac{2}{3} 10^{k} \sqrt{\log p / n} $},
+            legend style={legend columns=3},
+            legend to name= leg2
+    ]
+\addplot table[x=mult, y=irls_sqrt]{\timef};
+\addplot table[x=mult, y=irls_sigma]{\timef};
+\addplot table[x=mult, y=irls_sqrt_restart_10]{\timef};
+\addplot table[x=mult, y=irls_sqrt_restart_100]{\timef};
+\addplot table[x=mult, y=irls_sqrt_restart_1000]{\timef};
+\addplot table[x=mult, y=irls_sqrt_restart_10000]{\timef};
+%
+\legend{
+IRLS(sqrt),
+IRLS($\sigma$),
+IRLS(sqrt)+restart(10),
+IRLS(sqrt)+restart(100),
+IRLS(sqrt)+restart(1000),
+IRLS(sqrt)+restart(10000),
+}
+%    
+%    % (Relative) Coordinate at top of the second plot
+\coordinate (c22) at (rel axis cs:-0.1,0);
+%    
+\end{groupplot}
+\node[below] at (c22 |- current bounding box.south)
+  {\pgfplotslegendfromname{leg2}};
+      
+\end{tikzpicture}%
+
+
+
+
+\begin{tikzpicture}[scale=0.8]
+
+\pgfplotstableread[col sep=space]{lambda_err.csv}{\err}
+\pgfplotstableread[col sep=space]{lambda_time.csv}{\time}
+\pgfplotsset{
+	cycle list/Dark2,
+	cycle from colormap manual style,
+    scaled y ticks = false,
+    axis on top,
+    %xtick = data,
+    xticklabel style={text width=2em,align=center},
+    xminorticks=true,
+    yminorticks=true,
+    ylabel shift={-0em},
+    ylabel style={align=center},
+	grid=both,
+}
+       
+    \begin{groupplot}[ 
+        group style={
+        group size=2 by 1,
+        vertical sep=40pt,
+        horizontal sep=40pt
+        },
+    ]
+%
+    \nextgroupplot[		
+    		 ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+            ylabel={Relative error, $\norm{x_T-x}_2/\norm{x}_2$},
+            %title={$\lambda = \tfrac{3}{20}\sqrt{\frac{\log(p)}{n}}$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={Multiplier $k$ in $\lambda = \tfrac{2}{3} 10^{k} \sqrt{\log p / n} $},
+    ]
+\addplot table[x=mult, y=ITEM]{\err};
+\addplot table[x=mult, y=prox_grad]{\err};
+\addplot table[x=mult, y=prox_newton]{\err};
+\addplot table[x=mult, y=concomitant]{\err};
+\addplot table[x=mult, y=irls_sqrt]{\err};
+\addplot table[x=mult, y=irls_sigma]{\err};
+\addplot table[x=mult, y=irls_sqrt_restart]{\err};
+    
+    \nextgroupplot[
+                       	ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+            ylabel={Runtime, sec},
+            y label style={at={(-0.1,0.5)}},
+            %title={$\lambda = \tfrac{3}{20}\frac{\log(p)}{n}$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={Multiplier $k$ in $\lambda = \tfrac{2}{3} 10^{k} \sqrt{\log p / n} $},
+            legend style={legend columns=4},
+            legend to name= leg1
+    ]
+\addplot table[x=mult, y=ITEM]{\time};
+\addplot table[x=mult, y=prox_grad]{\time};
+\addplot table[x=mult, y=prox_newton]{\time};
+\addplot table[x=mult, y=concomitant]{\time};
+\addplot table[x=mult, y=irls_sqrt]{\time};
+\addplot table[x=mult, y=irls_sigma]{\time};
+\addplot table[x=mult, y=irls_sqrt_restart]{\time};
+%
+\legend{
+ITEM,
+Proximal Gradient,
+Proximal Newton,
+Concomitant LASSO,
+IRLS(sqrt),
+IRLS($\sigma$),
+IRLS(sqrt)+restart(1000),
+}
+%    
+%    % (Relative) Coordinate at top of the second plot
+\coordinate (c22) at (rel axis cs:-0.1,0);
+%    
+\end{groupplot}
+\node[below] at (c22 |- current bounding box.south)
+  {\pgfplotslegendfromname{leg1}};
+      
+\end{tikzpicture}%
+
+
+%\pgfplotsset{
+%        % initialize Dark2
+%        every axis plot/.style={line width=1pt},
+%        cycle list/Set1,
+%        % combine it with 'mark list*':
+%        cycle multiindex* list={
+%            mark list*\nextlist
+%            Set1\nextlist
+%        },
+%    }
+%
+%\begin{tikzpicture}[scale=0.8]
+%
+%
+%\begin{axis}[ 
+%%cycle list/Dark2,
+%%cycle from colormap manual style,
+%grid=both,
+%%xmode = log,
+%ymode=log,
+%%width = 100mm,
+%xlabel={Multiplier $k$ in $\lambda = \tfrac{2}{3} 10^{k} \sqrt{\log n / m} $},
+%ylabel={Relative error, $\norm{x_T-x}_2/\norm{x}_2$},
+%%y tick label style={ yshift = { \ifthenelse{\ticknum==0}{-0.5em}{0em}} }, %{yshift={ -0.5em}},
+%%xmin = -15,
+%%xmax = 90,
+%%ymin = 0.2,
+%%ymax=1.01,
+%mark size=1.0pt,
+%%legend style={at={(1.05,0.95)},anchor= north west ,font=\fontsize{8}{8}\selectfont},
+%legend style={at={(1.02,0.98)},anchor= north west ,font=\fontsize{8}{8}\selectfont},
+%legend cell align={left},
+%legend columns=1
+%]
+%\addplot table[x=mult, y=irls_sqrt, mark =*]{\rhun};
+%\addplot table[x=mult, y=irls_sigma]{\rhun};
+%\addplot table[x=mult, y=irls_sqrt_restart]{\rten};
+%\addplot table[x=mult, y=irls_sqrt_restart]{\rhun};
+%\addplot table[x=mult, y=irls_sqrt_restart]{\rthou};
+%%\addplot[Green, thick,line width=1pt] table[x=noise, y=block]{\rat};
+%%\addplot[Green, dashed, mark = square*, mark size=2pt, thick,line width=1pt] table[x=noise, y=block_adapt]{\rat};
+%%\addplot[Orange,thick,line width=1pt] table[x=noise, y=log]{\rat};
+%%\addplot[Orange, dashed,thick, mark = square*, mark size=2pt , line width=1pt] table[x=noise, y=log_adapt]{\rat};
+%\legend{
+%IRLS(sqrt),
+%IRLS($\sigma$),
+%IRLS(sqrt)+restart(10),
+%IRLS(sqrt)+restart(100),
+%IRLS(sqrt)+restart(1000), 
+%}
+%\end{axis}
+%\end{tikzpicture}
+%
+%\begin{tikzpicture}[scale=0.8]
+%
+%\pgfplotstableread[col sep=space]{lambda_time.csv}{\rhun}
+%\pgfplotstableread[col sep=space]{lambda_time_restart_10.csv}{\rten}
+%\pgfplotstableread[col sep=space]{lambda_time_restart_1000.csv}{\rthou}
+%
+%\begin{axis}[ 
+%%cycle list/Dark2,
+%%cycle from colormap manual style,
+%grid=both,
+%%width = 100mm,
+%xlabel={Multiplier $k$ in $\lambda = \tfrac{2}{3} 10^{k} \sqrt{\log n / m} $},
+%ylabel={Runtime, s},
+%ymode=log,
+%%y tick label style={ yshift = { \ifthenelse{\ticknum==0}{-0.5em}{0em}} }, %{yshift={ -0.5em}},
+%%xmin = -15,
+%%xmax = 90,
+%%ymin = 0.2,
+%%ymax=1.01,
+%mark size=1.0pt,
+%%legend style={at={(1.05,0.95)},anchor= north west ,font=\fontsize{8}{8}\selectfont},
+%legend style={at={(1.02,0.98)},anchor= north west ,font=\fontsize{8}{8}\selectfont},
+%legend cell align={left},
+%legend columns=1
+%]
+%\addplot table[x=mult, y=irls_sqrt]{\rhun};
+%\addplot table[x=mult, y=irls_sigma]{\rhun};
+%\addplot table[x=mult, y=irls_sqrt_restart]{\rten};
+%\addplot table[x=mult, y=irls_sqrt_restart]{\rhun};
+%\addplot table[x=mult, y=irls_sqrt_restart, dashed]{\rthou};
+%%\addplot[Green, thick,line width=1pt] table[x=noise, y=block]{\rat};
+%%\addplot[Green, dashed, mark = square*, mark size=2pt, thick,line width=1pt] table[x=noise, y=block_adapt]{\rat};
+%%\addplot[Orange,thick,line width=1pt] table[x=noise, y=log]{\rat};
+%%\addplot[Orange, dashed,thick, mark = square*, mark size=2pt , line width=1pt] table[x=noise, y=log_adapt]{\rat};
+%\legend{
+%IRLS(sqrt),
+%IRLS($\sigma$),
+%IRLS(sqrt)+restart(10),
+%IRLS(sqrt)+restart(100),
+%IRLS(sqrt)+restart(1000), 
+%}
+%\end{axis}
+%\end{tikzpicture}
+
+
+
+%\pgfplotsset{compat=1.5}
+%\begin{tikzpicture}[scale=0.8]
+%\pgfplotstableread[col sep=space]{oversampling_ratio.csv}{\rat}
+%\begin{axis}[ 
+%cycle list/Dark2,
+%cycle from colormap manual style,
+%grid=both,
+%%width = 100mm,
+%xlabel={Number of samples, $m$},
+%ylabel={Support recovery failure ratio ($s$)},
+%%y tick label style={ yshift = { \ifthenelse{\ticknum==0}{-0.5em}{0em}} }, %{yshift={ -0.5em}},
+%%xmin = -15,
+%%xmax = 90,
+%ymin = -0.05,
+%ymax=0.7,
+%mark size=1.0pt,
+%%legend style={at={(1.05,0.95)},anchor= north west ,font=\fontsize{8}{8}\selectfont},
+%legend style={at={(0.98,0.98)},anchor= north east ,font=\fontsize{8}{8}\selectfont},
+%legend cell align={left},
+%legend columns=1
+%]
+%\addplot table[x=m, y=ITEM]{\rat};
+%\addplot table[x=m, y=prox_grad]{\rat};
+%\addplot table[x=m, y=prox_newton]{\rat};
+%\addplot table[x=m, y=concomitant]{\rat};
+%\addplot table[x=m, y=irls_sqrt]{\rat};
+%\addplot table[x=m, y=irls_sigma]{\rat};
+%%\addplot[Green, thick,line width=1pt] table[x=noise, y=block]{\rat};
+%%\addplot[Green, dashed, mark = square*, mark size=2pt, thick,line width=1pt] table[x=noise, y=block_adapt]{\rat};
+%%\addplot[Orange,thick,line width=1pt] table[x=noise, y=log]{\rat};
+%%\addplot[Orange, dashed,thick, mark = square*, mark size=2pt , line width=1pt] table[x=noise, y=log_adapt]{\rat};
+%\legend{
+%ITEM,
+%Proximal Gradient,
+%Proximal Newton,
+%Concomitant LASSO,
+%IRLS(sqrt),
+%IRLS($\sigma$),
+%}
+%\end{axis}
+%\end{tikzpicture}
+%
+%\begin{tikzpicture}[scale=0.8]
+%\pgfplotstableread[col sep=space]{oversampling_ratio2.csv}{\rat}
+%\begin{axis}[ 
+%cycle list/Dark2,
+%cycle from colormap manual style,
+%grid=both,
+%%width = 100mm,
+%xlabel={Number of samples, $m$},
+%ylabel={Support recovery failure ratio ($2s$)},
+%%y tick label style={ yshift = { \ifthenelse{\ticknum==0}{-0.5em}{0em}} }, %{yshift={ -0.5em}},
+%%xmin = -15,
+%%xmax = 90,
+%ymin = -0.05,
+%ymax=0.6,
+%mark size=1.0pt,
+%%legend style={at={(1.05,0.95)},anchor= north west ,font=\fontsize{8}{8}\selectfont},
+%legend style={at={(0.98,0.98)},anchor= north east ,font=\fontsize{8}{8}\selectfont},
+%legend cell align={left},
+%legend columns=1
+%]
+%\addplot table[x=m, y=ITEM]{\rat};
+%\addplot table[x=m, y=prox_grad]{\rat};
+%\addplot table[x=m, y=prox_newton]{\rat};
+%\addplot table[x=m, y=concomitant]{\rat};
+%\addplot table[x=m, y=irls_sqrt]{\rat};
+%\addplot table[x=m, y=irls_sigma]{\rat};
+%%\addplot[Green, thick,line width=1pt] table[x=noise, y=block]{\rat};
+%%\addplot[Green, dashed, mark = square*, mark size=2pt, thick,line width=1pt] table[x=noise, y=block_adapt]{\rat};
+%%\addplot[Orange,thick,line width=1pt] table[x=noise, y=log]{\rat};
+%%\addplot[Orange, dashed,thick, mark = square*, mark size=2pt , line width=1pt] table[x=noise, y=log_adapt]{\rat};
+%\legend{
+%ITEM,
+%Proximal Gradient,
+%Proximal Newton,
+%Concomitant LASSO,
+%IRLS(sqrt),
+%IRLS($\sigma$),
+%}
+%\end{axis}
+%\end{tikzpicture}
+
+
+\end{document}

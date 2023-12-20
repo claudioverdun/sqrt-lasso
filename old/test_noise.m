@@ -10,7 +10,7 @@ m = 300;
 n = 1000;
 s = 50;
 
-errors = zeros(5,length(SNR_level), trials);
+errors = zeros(5,5, iterations);
 times = zeros(5,length(SNR_level), trials);
 
 lambda_opt = sqrt( log(n)/m);%s * sqrt( log(n)/m);

@@ -2,7 +2,6 @@ function x = coordinate_descent(x0, grad, Hessian, eta, lambda, N)%, obj)
 threshold = 10^-10;
 n = length(x0);
 lin_0 = grad - Hessian * eta;
-
 x = x0;
 for it=1:N
     

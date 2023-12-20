@@ -3,8 +3,11 @@
 % SQRT-Lasso Optimization: Don’t Worry About
 % its Nonsmooth Loss Function
 
-function x = proximal_gradient(A,b,eps1,lambda,Lmax,x0,N)
-threshold = 10^-10;%10^-16;
+function [x,time] = proximal_gradient_to(A,b,eps1,lambda,Lmax,x0,N, x_tr, threshold, timeout)
+%threshold = 10^-10;%10^-16;
+time = 0;
+tic;
+
 m = length(b);
 obj = @(x) sqrt(norm(A * x - b)^2 + eps1)/sqrt(m);
 grad = @(x) A' * (A*x-b)/ sqrt( norm(A*x-b)^2 + eps1)/ sqrt(m);
@@ -14,7 +17,7 @@ L = Lmax;
 Ltilde = L;
 x = x0;
 
-for it = 1:N 
+while true
     %it, L
     x_old = x;
     gr = grad(x);
@@ -32,10 +35,23 @@ for it = 1:N
     Ltilde = L;
     
     x = step(x,gr,L,lambda);
-    if (norm(x_old - x) < threshold)
+%     if (norm(x_old - x) < threshold)
+%         break;
+%     end
+    if norm(x_tr-x) < threshold * norm(x_tr)
+        dt = toc;
+        time = time + dt;
         break;
     end
+
+    dt = toc;
+    time = time + dt;
+    if time >= timeout  
+        break
+    end
+    tic;
 end
+
 end
 
 function thresh = step(x,gr,L,lambda)

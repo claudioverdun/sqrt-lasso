@@ -1,0 +1,177 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{pgfplots.groupplots}
+\pgfplotsset{compat=1.16}
+\usepackage{pgfplotstable}
+\usetikzlibrary{pgfplots.colorbrewer}
+
+
+%\pgfplotsset{
+%        cycle from colormap manual style/.style={
+%           % x=3cm,y=10pt,ytick=\empty,
+%            %stack plots=y,
+%            every axis plot/.style={line width=1pt},
+%        }}
+
+%\pgfplotsset{
+%        % initialize Dark2
+%        every axis plot/.style={line width=1pt},
+%        cycle list/Dark2,
+%        % combine it with 'mark list*':
+%        cycle multiindex* list={
+%            mark list*\nextlist
+%            Dark2\nextlist
+%        },
+%    }
+
+\pgfplotsset{
+        cycle from colormap manual style/.style={
+           % x=3cm,y=10pt,ytick=\empty,
+            %stack plots=y,
+            every axis plot/.style={line width=1pt},
+        }}
+
+\usetikzlibrary{external}
+\tikzset{external/system call={pdflatex \tikzexternalcheckshellescape --extra-mem-top=10000000 --extra-mem-bot=10000000 -halt-on-error 
+-interaction=batchmode -jobname "\image" "\texsource" && % or ;
+pdftops -eps "\image".pdf }}
+\tikzset{external/force remake}
+\tikzexternalize[shell escape=-enable-write18]
+
+\newcommand{\norm}[1]{\left\lVert #1\right\rVert}
+%
+%\pgfplotsset{select coords between index/.style 2 args={
+%    x filter/.code={
+%        \ifnum\coordindex<#1\def\pgfmathresult{}\fi
+%        \ifnum\coordindex>#2\def\pgfmathresult{}\fi
+%    }
+%}}
+
+\begin{document}%
+
+\begin{tikzpicture}[scale=0.8]
+\pgfplotstableread[col sep=space]{eps_err_restart.csv}{\err}
+\pgfplotstableread[col sep=space]{eps_err_restart_01.csv}{\errf}
+\pgfplotstableread[col sep=space]{eps_time_restart.csv}{\time}\pgfplotstableread[col sep=space]{eps_time_restart_01.csv}{\timef}
+
+\pgfplotsset{
+	cycle list/Dark2,
+	cycle from colormap manual style,
+    scaled y ticks = false,
+    axis on top,
+    %xtick = data,
+    xticklabel style={text width=2em,align=center},
+    xminorticks=true,
+    yminorticks=true,
+    ylabel shift={-0em},
+    ylabel style={align=center},
+	grid=both,
+}
+       
+    \begin{groupplot}[ 
+        group style={
+        group size=2 by 2,
+        vertical sep=40pt,
+        horizontal sep=40pt
+        },
+    ]
+%
+    \nextgroupplot[		
+    		 ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+    		 title = {$\lambda = \tfrac{2}{30}\sqrt{\log(p)/n}$},
+            ylabel={Relative error, $\norm{x_T-x}_2/\norm{x}_2$},
+            %title={$\lambda = \tfrac{3}{20}\sqrt{\frac{\log(p)}{n}}$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={Starting smoothing, $\varepsilon_0 = 10^{-k}$},
+    ]
+\addplot table[x=mult, y=irls_sqrt]{\errf};
+%\addplot table[x=mult, y=irls_sigma]{\errf};
+\addplot table[x=mult, y=irls_sqrt_restart_10]{\errf};
+\addplot table[x=mult, y=irls_sqrt_restart_100]{\errf};
+\addplot table[x=mult, y=irls_sqrt_restart_1000]{\errf};
+\addplot table[x=mult, y=irls_sqrt_restart_10000]{\errf};
+
+\nextgroupplot[		
+    		 ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+    		 title = {$\lambda = \tfrac{2}{3}\sqrt{\log(p)/n}$},
+            %ylabel={Relative error, $\norm{x_T-x}_2/\norm{x}_2$},
+            %title={$\lambda = \tfrac{3}{20}\sqrt{\frac{\log(p)}{n}}$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={Starting smoothing, $\varepsilon_0 = 10^{-k}$},
+    ]
+\addplot table[x=mult, y=irls_sqrt]{\err};
+%\addplot table[x=mult, y=irls_sigma]{\err};
+\addplot table[x=mult, y=irls_sqrt_restart_10]{\err};
+\addplot table[x=mult, y=irls_sqrt_restart_100]{\err};
+\addplot table[x=mult, y=irls_sqrt_restart_1000]{\err};
+\addplot table[x=mult, y=irls_sqrt_restart_10000]{\err};
+
+\nextgroupplot[		
+    		 ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+    		 %title = {Relative Error Threshold $10^-3$},
+            ylabel={Runtime, sec},
+            %title={$\lambda = \tfrac{3}{20}\sqrt{\frac{\log(p)}{n}}$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={Starting smoothing, $\varepsilon_0 = 10^{-k}$},
+    ]
+\addplot table[x=mult, y=irls_sqrt]{\timef};
+%\addplot table[x=mult, y=irls_sigma]{\timef};
+\addplot table[x=mult, y=irls_sqrt_restart_10]{\timef};
+\addplot table[x=mult, y=irls_sqrt_restart_100]{\timef};
+\addplot table[x=mult, y=irls_sqrt_restart_1000]{\timef};
+\addplot table[x=mult, y=irls_sqrt_restart_10000]{\timef};
+
+    
+    \nextgroupplot[
+                       	ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+            %ylabel={Runtime, sec},
+            %title={$\lambda = \tfrac{3}{20}\frac{\log(p)}{n}$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={Starting smoothing, $\varepsilon_0 = 10^{-k}$},
+            legend style={legend columns=3},
+            legend to name= leg2
+    ]
+\addplot table[x=mult, y=irls_sqrt]{\time};
+%\addplot table[x=mult, y=irls_sigma]{\time};
+\addplot table[x=mult, y=irls_sqrt_restart_10]{\time};
+\addplot table[x=mult, y=irls_sqrt_restart_100]{\time};
+\addplot table[x=mult, y=irls_sqrt_restart_1000]{\time};
+\addplot table[x=mult, y=irls_sqrt_restart_10000]{\time};
+%
+\legend{
+IRLS(sqrt),
+%IRLS($\sigma$),
+IRLS(sqrt)+restart(10),
+IRLS(sqrt)+restart(100),
+IRLS(sqrt)+restart(1000),
+IRLS(sqrt)+restart(10000),
+}
+%    
+%    % (Relative) Coordinate at top of the second plot
+\coordinate (c22) at (rel axis cs:-0.1,0);
+%    
+\end{groupplot}
+\node[below] at (c22 |- current bounding box.south)
+  {\pgfplotslegendfromname{leg2}};
+      
+\end{tikzpicture}%
+
+\end{document}

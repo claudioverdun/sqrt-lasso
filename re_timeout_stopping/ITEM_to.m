@@ -1,5 +1,7 @@
-function z = ITEM(gradf,mu,L,x0,N)
-threshold = 10^-10; %10^-16; 
+function [z,time] = ITEM_to(gradf,mu,L,x0,N, x_tr, threshold, timeout)
+%threshold = 10^-10; %10^-16; 
+time = 0;
+tic;
 
 if (mu ~= 0)
     q = mu/L;
@@ -8,7 +10,7 @@ if (mu ~= 0)
     zk = x0;
     xk = x0;
 
-    for i = 1:N
+    while true
         z_old = zk;
         Ak1 = ( (1+q)*Ak+2*(1+sqrt((1+Ak)*(1+q*Ak)) ))/(1-q)^2; 
         betak  	= Ak/(1-q)/Ak1;
@@ -18,9 +20,22 @@ if (mu ~= 0)
         xk = yk - grk/L;
         zk = (1 - q*deltak)*zk + q* deltak*yk - deltak*grk/L;
         
-        if (norm(z_old - zk) < threshold)
+%         if (norm(z_old - zk) < threshold)
+%             break;
+%         end
+
+        if norm(x_tr -zk) < threshold * norm(x_tr)
+            dt = toc;
+            time = time + dt;
             break;
         end
+    
+        dt = toc;
+        time = time + dt;
+        if time >= timeout
+            break
+        end
+        tic;
     end
     z = zk;
 else
@@ -29,7 +44,7 @@ else
     yk = x0;
     xk = x0;
 
-    for i = 1:N
+    while true
         x_old = xk;
         grk = gradf(xk);
         yk1  =  xk - grk/L;
@@ -42,9 +57,21 @@ else
         yk = yk1;
         thetak = thetak1;
         
-        if (norm(x_old - xk) < threshold)
+%         if (norm(x_old - xk) < threshold)
+%             break;
+%         end
+        if norm(x_tr-xk) < threshold * norm(x_tr)
+            dt = toc;
+            time = time + dt;
             break;
         end
+    
+        dt = toc;
+        time = time + dt;
+        if time >= timeout
+            break
+        end
+        tic
     end
     z = xk;
 end

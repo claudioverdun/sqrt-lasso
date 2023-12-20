@@ -1,10 +1,15 @@
-function x = IRLS_eps_decay(A,b,lambda,eps0,x0,N,Nlsp,decay,s,solver)
+function [x,time] = IRLS_eps_decay_to_rie(A,b,lambda,eps0,x0,N,Nlsp,decay,s,solver, x_tr, threshold, timeout)
+time = 0;
+tic;
+
 n = size(A,2);
 m = length(b);
 x = x0;
-threshold = 10.^-3;%10.^-6
+%threshold = 10.^-3;%10.^-6
  
 f_min = realmax;
+
+
 
 if strcmp(decay,'exp')
     eps2 = eps0;
@@ -13,8 +18,8 @@ else
 end
 
 % f_vals = zeros(N,1);
-
-for it=1:N
+it = 1;
+while true
     x_old = x;
      
     switch decay
@@ -72,8 +77,18 @@ for it=1:N
 %     x = A_expanded \ b_expanded;
     
     if norm(x_old-x) < threshold * norm(x_old)
+        dt = toc;
+        time = time + dt;
         break;
     end
+
+    dt = toc;
+    time = time + dt;
+    if time >= timeout
+        break
+    end
+    tic
+    it = it + 1;
 end
 % i = 0
 end
