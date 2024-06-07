@@ -1,0 +1,346 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{pgfplots.groupplots}
+%\usetikzlibrary{plotmarks}
+
+\pgfplotsset{compat=newest}
+\usepackage{pgfplotstable}
+\usetikzlibrary{pgfplots.colorbrewer}
+\pgfplotsset{
+        cycle from colormap manual style/.style={
+           % x=3cm,y=10pt,ytick=\empty,
+            %stack plots=y,
+            every axis plot/.style={line width=1pt},
+        }}
+
+
+\usetikzlibrary{external}
+\tikzset{external/system call={pdflatex \tikzexternalcheckshellescape --extra-mem-top=10000000 --extra-mem-bot=10000000 -halt-on-error 
+-interaction=batchmode -jobname "\image" "\texsource" && % or ;
+pdftops -eps "\image".pdf }}
+\tikzset{external/force remake}
+\tikzexternalize[shell escape=-enable-write18]
+
+\newcommand{\norm}[1]{\left\lVert #1\right\rVert}
+%
+%\pgfplotsset{select coords between index/.style 2 args={
+%    x filter/.code={
+%        \ifnum\coordindex<#1\def\pgfmathresult{}\fi
+%        \ifnum\coordindex>#2\def\pgfmathresult{}\fi
+%    }
+%}}
+
+\begin{document}%
+
+%
+\begin{tikzpicture}[scale=0.89]
+%
+\pgfplotstableread[col sep=space]{noise_stab_01_err.csv}{\errsm}
+\pgfplotstableread[col sep=space]{noise_stab_1_err.csv}{\err}
+\pgfplotstableread[col sep=space]{noise_stab_01_rme.csv}{\rmesm}
+\pgfplotstableread[col sep=space]{noise_stab_1_rme.csv}{\rme}
+\pgfplotstableread[col sep=space]{noise_stab_01_time.csv}{\timesm}
+\pgfplotstableread[col sep=space]{noise_stab_1_time.csv}{\time}
+\pgfplotstableread[col sep=space]{noise_stab_01_ratio.csv}{\sfrsm}
+\pgfplotstableread[col sep=space]{noise_stab_1_ratio.csv}{\sfr}
+\pgfplotstableread[col sep=space]{noise_stab_01_esp.csv}{\espsm}
+\pgfplotstableread[col sep=space]{noise_stab_1_esp.csv}{\esp}
+
+\pgfplotsset{
+	cycle list/Dark2,
+	cycle from colormap manual style,
+    scaled y ticks = false,
+    axis on top,
+    %xtick = data,
+    xticklabel style={text width=2em,align=center},
+    xminorticks=true,
+    yminorticks=true,
+    ylabel shift={-0em},
+    ylabel style={align=center},
+	grid=both,
+}
+       
+    \begin{groupplot}[ 
+        group style={
+        group size=5 by 2,
+        vertical sep=40pt,
+        horizontal sep=50pt
+        },
+    ]
+%
+    \nextgroupplot[		
+    		 ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+            ylabel= {$\lambda = \frac{1}{100}$},
+            title={Relative error, $\norm{\beta^k-\beta_*}_2/\norm{\beta_*}_2$} ,
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={SNR, dB}
+    ]
+\addplot table[x=snr, y=ITEM]{\errsm};
+\addplot table[x=snr, y=prox_grad]{\errsm};
+\addplot table[x=snr, y=prox_newton]{\errsm};
+\addplot table[x=snr, y=concomitant]{\errsm};
+\addplot table[x=snr, y=irls_sqrt]{\errsm};
+\addplot table[x=snr, y=irls_sigma]{\errsm};
+\addplot table[x=snr, y=irls_sqrt_restart]{\errsm};
+\addplot table[x=snr, y=frank_wolfe_epi]{\errsm};
+\addplot[mark=none, very thick, red] table[x=snr, y=oracle]{\errsm}; 
+\addplot[mark=none, very thick, dashed, black, samples=2, domain = 10:60] {1.0};
+%    
+    % (Relative) Coordinate at top of the first plot
+%    \coordinate (c11) at (rel axis cs:0,1);
+%
+
+\nextgroupplot[		
+    		 ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+            %ylabel={Relative measurement error, $\norm{A x_T- b}_2/\norm{b}_2$},
+            title={Relative measurement error, $\norm{X \beta^k- y}_2/\norm{y}_2$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={SNR, dB}
+    ]
+\addplot table[x=snr, y=ITEM]{\rmesm};
+\addplot table[x=snr, y=prox_grad]{\rmesm};
+\addplot table[x=snr, y=prox_newton]{\rmesm};
+\addplot table[x=snr, y=concomitant]{\rmesm};
+\addplot table[x=snr, y=irls_sqrt]{\rmesm};
+\addplot table[x=snr, y=irls_sigma]{\rmesm};
+\addplot table[x=snr, y=irls_sqrt_restart]{\rmesm};
+\addplot table[x=snr, y=frank_wolfe_epi]{\rmesm};
+\addplot[mark=none, very thick, red] table[x=snr, y=oracle]{\rmesm};  
+\addplot[mark=none, very thick, dashed, black, samples=2, domain = 10:60] {1.0};
+
+    \nextgroupplot[
+    		ymax = 65,
+            %ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+            title={Runtime, sec},
+            %title={$\lambda = \tfrac{3}{20}\frac{\log(p)}{n}$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={SNR, dB}
+    ]
+\addplot table[x=snr, y=ITEM]{\timesm};
+\addplot table[x=snr, y=prox_grad]{\timesm};
+\addplot table[x=snr, y=prox_newton]{\timesm};
+\addplot table[x=snr, y=concomitant]{\timesm};
+\addplot table[x=snr,  y expr={ \thisrow{irls_sqrt} + \thisrow{svd} }]{\timesm};
+\addplot table[x=snr, y expr={ \thisrow{irls_sigma} + \thisrow{svd}}]{\timesm};
+\addplot table[x=snr, y expr={ \thisrow{irls_sqrt_restart} + \thisrow{svd}}]{\timesm};
+\addplot table[x=snr, y=frank_wolfe_epi]{\timesm};
+\addplot[mark=none, very thick, dashed, samples=2, domain = 10:60] {120};
+%\addplot[yellow, dashed, thick] table[x=snr, y=irls_sigma]{\timesm};
+
+%\addplot table[x=snr, y=oracle]{\timesm};
+
+\nextgroupplot[
+            %ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+            title={Support Failure Ratio},
+            %title={$\lambda = \tfrac{3}{20}\frac{\log(p)}{n}$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={SNR, dB},
+            domain = 10:60
+    ]
+\addplot table[x=snr, y=ITEM]{\sfrsm};
+\addplot table[x=snr, y=prox_grad]{\sfrsm};
+\addplot table[x=snr, y=prox_newton]{\sfrsm};
+\addplot table[x=snr, y=concomitant]{\sfrsm};
+\addplot table[x=snr, y=irls_sqrt]{\sfrsm};
+\addplot table[x=snr, y=irls_sigma]{\sfrsm};
+\addplot table[x=snr, y=irls_sqrt_restart]{\sfrsm};
+\addplot table[x=snr, y=frank_wolfe_epi]{\sfrsm};
+
+\nextgroupplot[
+            %ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+    		 ymax = {300},
+            title={Effective sparsity, $\norm{\beta^k}_1^2 / \norm{\beta^k}_2^2$},
+            %title={$\lambda = \tfrac{3}{20}\frac{\log(p)}{n}$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={SNR, dB},
+            domain = 10:60
+    ]
+\addplot table[x=snr, y=ITEM]{\espsm};
+\addplot table[x=snr, y=prox_grad]{\espsm};
+\addplot table[x=snr, y=prox_newton]{\espsm};
+\addplot table[x=snr, y=concomitant]{\espsm};
+\addplot table[x=snr, y=irls_sqrt]{\espsm};
+\addplot table[x=snr, y=irls_sigma]{\espsm};
+\addplot table[x=snr, y=irls_sqrt_restart]{\espsm};
+\addplot table[x=snr, y=frank_wolfe_epi]{\espsm};
+%\addplot table[x=snr, y=oracle]{\espsm}; 
+\addplot[mark=none, very thick, dashed, green, samples=2, domain = 10:60] {20};
+
+
+\nextgroupplot[		
+    		 ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+            %ylabel={Relative error, $\norm{x_T-x}_2/\norm{x}_2$},
+            ylabel={$\lambda = \frac{1}{7}$},%\tfrac{2}{3} \sqrt{\frac{\log(p)}{n} }$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={SNR, dB}
+    ]
+\addplot table[x=snr, y=ITEM]{\err};
+\addplot table[x=snr, y=prox_grad]{\err};
+\addplot table[x=snr, y=prox_newton]{\err};
+\addplot table[x=snr, y=concomitant]{\err};
+\addplot table[x=snr, y=irls_sqrt]{\err};
+\addplot table[x=snr, y=irls_sigma]{\err};
+\addplot table[x=snr, y=irls_sqrt_restart]{\err};
+\addplot table[x=snr, y=frank_wolfe_epi]{\err};
+\addplot[mark=none, very thick, red] table[x=snr, y=oracle]{\err};  
+\addplot[mark=none, very thick, dashed, black, samples=2, domain = 10:60] {1.0};
+
+
+    
+%    
+    % (Relative) Coordinate at top of the first plot
+%    \coordinate (c11) at (rel axis cs:0,1);
+%
+\nextgroupplot[		
+    		 ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+            %ylabel={Relative error, $\norm{x_T-x}_2/\norm{x}_2$},
+            %title={$\lambda = \tfrac{3}{2} \sqrt{\frac{\log(p)}{n} }$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={SNR, dB}
+    ]
+\addplot table[x=snr, y=ITEM]{\rme};
+\addplot table[x=snr, y=prox_grad]{\rme};
+\addplot table[x=snr, y=prox_newton]{\rme};
+\addplot table[x=snr, y=concomitant]{\rme};
+\addplot table[x=snr, y=irls_sqrt]{\rme};
+\addplot table[x=snr, y=irls_sigma]{\rme};
+\addplot table[x=snr, y=irls_sqrt_restart]{\rme};
+\addplot table[x=snr, y=frank_wolfe_epi]{\rme};
+\addplot[mark=none, very thick, red] table[x=snr, y=oracle]{\rme};  
+\addplot[mark=none, very thick, dashed, black, samples=2, domain = 10:60] {1.0};
+
+
+%    
+%    
+%    % (Relative) Coordinate at top of the first plot
+%    \coordinate (c12) at (rel axis cs:0,1);
+%
+
+%    
+%    % (Relative) Coordinate at top of the second plot
+%    \coordinate (c21) at (rel axis cs:-0.1,0);% I moved this to the upper right corner
+%     
+    \nextgroupplot[
+             ymax={65},
+             %ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+            %ylabel={Runtime, sec},
+            %title={$\lambda = \tfrac{3}{20}\frac{\log(p)}{n}$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={SNR, dB},
+            legend style={legend columns=9},
+            legend to name= leg1
+    ]
+\addplot table[x=snr, y=ITEM]{\time};
+\addplot table[x=snr, y=prox_grad]{\time};
+\addplot table[x=snr, y=prox_newton]{\time};
+\addplot table[x=snr, y=concomitant]{\time};
+\addplot table[x=snr,  y expr={ \thisrow{irls_sqrt} + \thisrow{svd} }]{\time};
+\addplot table[x=snr, y expr={ \thisrow{irls_sigma}+ \thisrow{svd} }]{\time};
+\addplot table[x=snr, y expr={ \thisrow{irls_sqrt_restart} + \thisrow{svd} }]{\time};
+\addplot table[x=snr, y=frank_wolfe_epi]{\time};
+\addplot[mark=none, very thick, red] table[x=snr, y expr={\thisrow{oracle} +120 }]{\time};
+%\addplot[yellow, dashed, thick] table[x=snr, y=irls_sigma]{\time};
+%\addplot table[x=snr, y=oracle]{\time};
+%
+\legend{
+ITEM,
+Proximal Gradient,
+Proximal Newton,
+Concomitant LASSO,
+IRLS(\texttt{sqrt}),
+IRLS(\texttt{best-s-}$\ell_1$\texttt{-alt}),
+IRLS(\texttt{sqrt-restart}),
+Frank-Wolfe,
+Oracle,
+%IRLS($\sigma$) - EIG,
+}
+  
+  
+
+%    % (Relative) Coordinate at top of the second plot
+%    \coordinate (c21) at (rel axis cs:-0.1,0);% I moved this to the upper right corner
+%     
+    \nextgroupplot[
+                       	%ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+           % ylabel={Runtime, sec},
+            %title={$\lambda = \tfrac{3}{20}\frac{\log(p)}{n}$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={SNR, dB}
+    ]
+\addplot table[x=snr, y=ITEM]{\sfr};
+\addplot table[x=snr, y=prox_grad]{\sfr};
+\addplot table[x=snr, y=prox_newton]{\sfr};
+\addplot table[x=snr, y=concomitant]{\sfr};
+\addplot table[x=snr, y=irls_sqrt]{\sfr};
+\addplot table[x=snr, y=irls_sigma]{\sfr};
+\addplot table[x=snr, y=irls_sqrt_restart]{\sfr};
+\addplot table[x=snr, y=frank_wolfe_epi]{\sfr};
+%
+
+\coordinate (c22) at (rel axis cs:-0.6,0);  
+
+\nextgroupplot[
+            %ymode=log,
+    		 %xmode = log,
+    		 %log basis x={10},
+            %title={Effective sparsity, $\norm{\beta_T}_1^2 / \norm{\beta_T}_2^2$},
+            %title={$\lambda = \tfrac{3}{20}\frac{\log(p)}{n}$},
+            cycle list name=Dark2,
+            cycle from colormap manual style,
+            xlabel={SNR, dB}
+    ]
+\addplot table[x=snr, y=ITEM]{\esp};
+\addplot table[x=snr, y=prox_grad]{\esp};
+\addplot table[x=snr, y=prox_newton]{\esp};
+\addplot table[x=snr, y=concomitant]{\esp};
+\addplot table[x=snr, y=irls_sqrt]{\esp};
+\addplot table[x=snr, y=irls_sigma]{\esp};
+\addplot table[x=snr, y=irls_sqrt_restart]{\esp};
+\addplot table[x=snr, y=frank_wolfe_epi]{\esp};
+%\addplot table[x=snr, y=oracle]{\esp};  
+\addplot[mark=none, very thick, dashed, green, samples=2, domain = 10:60] {20};
+%\addplot table[x=snr, y expr = {20}]{\esp};  
+%    
+%    % (Relative) Coordinate at top of the second plot
+
+%    
+\end{groupplot}
+\node[below] at (c22 |- current bounding box.south)
+  {\pgfplotslegendfromname{leg1}};
+      
+\end{tikzpicture}%
+
+\end{document}
