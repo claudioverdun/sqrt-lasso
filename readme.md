@@ -79,6 +79,7 @@ It was developed jointly at:
 * Institute of Computational Biology, Helmholtz Munich
 
 C. Mayrink Verdun is supported by the German Science Foundation (DFG) within the Gottfried Wilhelm Leibniz Prize under Grant BO 1734/20-1, under contract number PO-1347/3-2, under Emmy Noether junior research group KR 4512/1-1 and within Germany's Excellence Strategy EXC-2111 390814868. 
+
 O. Melnyk acknowledges support from the Helmholtz Association under the contracts No.~ZT-I-0025 (Ptychography 4.0), No.~ZT-I-PF-4-018 (AsoftXm), No.~ZT-I-PF-5-28 (EDARTI), No.~ZT-I-PF-4-024 (BRLEMMM).
 
 sqrt-lasso is free software. You can redistribute it and/or modify it under the
