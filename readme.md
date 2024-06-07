@@ -51,7 +51,7 @@ Directory structure
 
 File/Folder        | Purpose
 ------------------:| ---------------------------------------------------------------------
-algorithms (dir)   | Contains implementation of algortihms for square-root LASSO. The folder "relative_iterate_error_timeout_stopping" contains implementation of the algorithm with the relative steps size and timeout stopping criteria. The folder "other" contains implementation of IRLS with fixed number of iterations.
+algorithms (dir)   | Contains implementations of algortihms for square-root LASSO. The folder "relative_iterate_error_timeout_stopping" contains implementations of the algorithms with the relative steps size and timeout stopping criteria. The folder "other" contains implementations of IRLS with fixed number of iterations.
 figures (dir) 	   | Source code for the numerical experiments depicted in Figures 1 and 2.
 s_ratio.m 		   | Helper function for SFR computation
 COPYING            | License information
