@@ -3,7 +3,7 @@ sqrt-lasso
 
 Overview
 --------
-***sqrt-lasso*** is a Matlab toolbox for square-root LASSO.
+***sqrt-lasso*** is a Matlab toolbox for solving square-root LASSO problem.
 It implements various reconstruction algorithms and their comparisons on the synthetic data.
 
 __Reconstruction Methods for square-root LASSO__
