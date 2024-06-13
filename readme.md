@@ -3,7 +3,7 @@ sqrt-lasso
 
 Overview
 --------
-***sqrt-lasso*** is a Matlab toolbox for square-root LASSO.
+***sqrt-lasso*** is a Matlab toolbox for solving square-root LASSO problem.
 It implements various reconstruction algorithms and their comparisons on the synthetic data.
 
 __Reconstruction Methods for square-root LASSO__
@@ -51,7 +51,7 @@ Directory structure
 
 File/Folder        | Purpose
 ------------------:| ---------------------------------------------------------------------
-algorithms (dir)   | Contains implementation of algortihms for square-root LASSO. The folder "relative_iterate_error_timeout_stopping" contains implementation of the algorithm with the relative steps size and timeout stopping criteria. The folder "other" contains implementation of IRLS with fixed number of iterations.
+algorithms (dir)   | Contains implementations of algortihms for square-root LASSO. The folder "relative_iterate_error_timeout_stopping" contains implementations of the algorithms with the relative steps size and timeout stopping criteria. The folder "other" contains implementations of IRLS with fixed number of iterations.
 figures (dir) 	   | Source code for the numerical experiments depicted in Figures 1 and 2.
 s_ratio.m 		   | Helper function for SFR computation
 COPYING            | License information
@@ -79,6 +79,7 @@ It was developed jointly at:
 * Institute of Computational Biology, Helmholtz Munich
 
 C. Mayrink Verdun is supported by the German Science Foundation (DFG) within the Gottfried Wilhelm Leibniz Prize under Grant BO 1734/20-1, under contract number PO-1347/3-2, under Emmy Noether junior research group KR 4512/1-1 and within Germany's Excellence Strategy EXC-2111 390814868. 
+
 O. Melnyk acknowledges support from the Helmholtz Association under the contracts No.~ZT-I-0025 (Ptychography 4.0), No.~ZT-I-PF-4-018 (AsoftXm), No.~ZT-I-PF-5-28 (EDARTI), No.~ZT-I-PF-4-024 (BRLEMMM).
 
 sqrt-lasso is free software. You can redistribute it and/or modify it under the
